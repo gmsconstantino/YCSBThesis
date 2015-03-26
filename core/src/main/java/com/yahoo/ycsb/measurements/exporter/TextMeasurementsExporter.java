@@ -46,7 +46,12 @@ public class TextMeasurementsExporter implements MeasurementsExporter
     bw.newLine();
   }
 
-  public void close() throws IOException
+    @Override
+    public void flush() throws IOException {
+        this.bw.flush();
+    }
+
+    public void close() throws IOException
   {
     this.bw.close();
   }

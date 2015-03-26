@@ -396,11 +396,12 @@ public class Client
 			throws IOException
 	{
 		MeasurementsExporter exporter = null;
+        String exportFile = null;
 		try
 		{
 			// if no destination file is provided the results will be written to stdout
 			OutputStream out;
-			String exportFile = props.getProperty("exportfile");
+			exportFile = props.getProperty("exportfile");
 			if (exportFile == null)
 			{
 				out = System.out;
@@ -429,7 +430,8 @@ public class Client
 			Measurements.getMeasurements().exportMeasurements(exporter);
 		} finally
 		{
-			if (exporter != null)
+            exporter.flush();
+			if (exportFile != null)
 			{
 				exporter.close();
 			}
