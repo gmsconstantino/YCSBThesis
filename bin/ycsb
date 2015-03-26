@@ -21,6 +21,11 @@ COMMANDS = {
         "description" : "Execute the transaction phase",
         "main"        : "com.yahoo.ycsb.Client",
     },
+    "load_run" : {
+        "command"     : "-load",
+        "description" : "Execute load phase and the transaction phase",
+        "main"        : "com.yahoo.ycsb.myClient",
+    },
 }
 
 DATABASES = {
@@ -41,7 +46,8 @@ DATABASES = {
     "nosqldb"      : "com.yahoo.ycsb.db.NoSqlDbClient",
     "orientdb"     : "com.yahoo.ycsb.db.OrientDBClient",
     "redis"        : "com.yahoo.ycsb.db.RedisClient", 
-    "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient", 
+    "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient",
+    "myhashmap"    : "com.yahoo.ycsb.db.DatabaseClient", 
 }
 
 OPTIONS = {
