@@ -164,4 +164,8 @@ public class Measurements
 		
 		return ret;
 	}
+
+    public void cleanMeasurements(){
+        data = new HashMap<String, OneMeasurement>();
+    }
 }
