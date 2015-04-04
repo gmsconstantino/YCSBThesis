@@ -171,7 +171,7 @@ public class myClient
 
 
             HashMap<String,String> h = new HashMap<String, String>();
-            h.put("exec","run");git
+            h.put("exec","run");
             StrSubstitutor sub = new StrSubstitutor(h);
             String fpath = sub.replace(props.getProperty("exportfile"));
             newargs[newargs.length-2] = "-p";
