@@ -21,7 +21,9 @@ package com.yahoo.ycsb;
 import com.yahoo.ycsb.db.dbSingleton;
 import com.yahoo.ycsb.measurements.Measurements;
 import database.TransactionFactory;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Permission;
@@ -112,6 +114,18 @@ public class myClient
             }
         }
 
+        String path = props.getProperty("exportfile");
+        String finalName;
+        int index_ext = 0;
+        if (path!=null){
+            File f = new File(path);
+            // Assumindo que tem extensao
+            index_ext = f.getName().lastIndexOf(".");
+            finalName = path.substring(0,path.lastIndexOf("/"))+"/"+f.getName().substring(0,index_ext)+"_${exec}."+f.getName().substring(index_ext+1);
+            System.out.println(finalName);
+            props.setProperty("exportfile",finalName);
+        }
+
         System.out.println("Database Transactions Type : "+ props.getProperty("transaction.type","TWOPL"));
         TransactionFactory.type type = TransactionTypeFactory.getType(props.getProperty("transaction.type","TWOPL"));
         dbSingleton.setTransactionype(type);
@@ -119,6 +133,21 @@ public class myClient
         boolean interactive =  Boolean.parseBoolean(props.getProperty(INTERACTIVE, INTERACTIVE_DEFAULT));
 
         System.out.println("Loading...\n");
+
+        if (path!=null){
+            String newargs[] = new String[args.length+2];
+            System.arraycopy(args,0,newargs,0,args.length);
+
+
+            HashMap<String,String> h = new HashMap<String, String>();
+            h.put("exec","load");
+            StrSubstitutor sub = new StrSubstitutor(h);
+            String fpath = sub.replace(props.getProperty("exportfile"));
+            newargs[newargs.length-2] = "-p";
+            newargs[newargs.length-1] = "exportfile="+fpath;
+
+            args = newargs;
+        }
 
         forbidSystemExitCall() ;
         try {
@@ -135,6 +164,22 @@ public class myClient
             if (args[i].equals("-load"))
                 args[i]="-t";
         }
+
+        if (path!=null){
+            String newargs[] = new String[args.length+2];
+            System.arraycopy(args,0,newargs,0,args.length);
+
+
+            HashMap<String,String> h = new HashMap<String, String>();
+            h.put("exec","run");git
+            StrSubstitutor sub = new StrSubstitutor(h);
+            String fpath = sub.replace(props.getProperty("exportfile"));
+            newargs[newargs.length-2] = "-p";
+            newargs[newargs.length-1] = "exportfile="+fpath;
+
+            args = newargs;
+        }
+
 
         Measurements.getMeasurements().cleanMeasurements();
 
