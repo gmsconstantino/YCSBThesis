@@ -25,7 +25,7 @@
 # scattered around the keyspace if they are keyed by userid.timestamp. A workload
 # which orders items purely by time, and demands the latest, is very different than 
 # workload here (which we believe is more typical of how people build systems.)
-name=workloadd
+nameworkload=workloadd
 
 recordcount=1000
 operationcount=1000
