@@ -20,6 +20,8 @@ public class TransactionTypeFactory {
             return TransactionFactory.type.OCC_MULTI;
         } else if(value.toUpperCase().equals("SI")) {
             return TransactionFactory.type.SI;
+        } else if(value.toUpperCase().equals("BLOTTER")) {
+            return TransactionFactory.type.BLOTTER;
         } else
             return null;
     }
