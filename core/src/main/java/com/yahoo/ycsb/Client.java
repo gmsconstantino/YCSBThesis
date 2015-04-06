@@ -414,13 +414,13 @@ public class Client
 			String exporterStr = props.getProperty("exporter", "com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter");
 			try
 			{
-				exporter = (MeasurementsExporter) Class.forName(exporterStr).getConstructor(OutputStream.class).newInstance(out);
+				exporter = (MeasurementsExporter) Class.forName(exporterStr).getConstructor(OutputStream.class, Properties.class).newInstance(out, props);
 			} catch (Exception e)
 			{
 				System.err.println("Could not find exporter " + exporterStr
 						+ ", will use default text reporter.");
 				e.printStackTrace();
-				exporter = new TextMeasurementsExporter(out);
+				exporter = new TextMeasurementsExporter(out, null);
 			}
 
 			exporter.write("OVERALL", "RunTime(ms)", runtime);
@@ -488,11 +488,13 @@ public class Client
 			else if (args[argindex].compareTo("-load")==0)
 			{
 				dotransactions=false;
+                props.setProperty("op", "load");
 				argindex++;
 			}
 			else if (args[argindex].compareTo("-t")==0)
 			{
 				dotransactions=true;
+                props.setProperty("op", "run");
 				argindex++;
 			}
 			else if (args[argindex].compareTo("-s")==0)

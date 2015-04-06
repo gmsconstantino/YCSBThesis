@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Properties;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
@@ -34,7 +35,7 @@ public class JSONMeasurementsExporter implements MeasurementsExporter
   private JsonFactory factory = new JsonFactory();
   private JsonGenerator g;
 
-  public JSONMeasurementsExporter(OutputStream os) throws IOException
+  public JSONMeasurementsExporter(OutputStream os, Properties props) throws IOException
   {
 
     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));

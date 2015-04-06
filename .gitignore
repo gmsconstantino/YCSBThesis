@@ -9,3 +9,13 @@ output*
 .project
 .classpath
 .settings
+
+# Created by https://www.gitignore.io
+
+### Intellij ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
+#
+*.iml
+#
+## Directory-based project format:
+.idea/
