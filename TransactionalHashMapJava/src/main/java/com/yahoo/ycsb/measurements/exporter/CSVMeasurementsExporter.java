@@ -16,32 +16,43 @@
  */
 package com.yahoo.ycsb.measurements.exporter;
 
+import com.opencsv.CSVWriter;
 import com.yahoo.ycsb.db.Config;
+import org.apache.commons.io.FileUtils;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.*;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
 /**
  * Export measurements into a machine readable JSON file.
  */
-public class DBMeasurementsExporter implements MeasurementsExporter
+public class CSVMeasurementsExporter implements MeasurementsExporter
 {
-
+    String keys[] = {"workload", "recordcount", "operationcount", "threads", "distribution",
+            "transactiontype", "run", "runtime", "throughput",
+            "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
+            "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates"};
     HashMap<String, String> data;
 
-    public DBMeasurementsExporter(OutputStream os, Properties props) throws IOException
+    public CSVMeasurementsExporter(OutputStream os, Properties props) throws IOException
     {
+        os.close();
         data = new HashMap<String, String>();
 
-        data.put("workload", "\""+props.getProperty("nameworkload","test")+"\"");
+        data.put("exportfile", props.getProperty("exportfile"));
+
+        data.put("workload", props.getProperty("nameworkload","test"));
         data.put("recordcount", props.getProperty("recordcount","-1"));
         data.put("operationcount", props.getProperty("operationcount","-1"));
         data.put("threads", props.getProperty("threadcount","-1"));
-        data.put("distribution", "\""+props.getProperty("requestdistribution")+"\"");
-        data.put("transactiontype", "\""+props.getProperty("transaction.type","TWOPL")+"\"");
+        data.put("distribution", props.getProperty("requestdistribution"));
+        data.put("transactiontype", props.getProperty("transaction.type","TWOPL"));
 
         if(props.getProperty("op","load").equals("run"))
             data.put("run", "1");
@@ -101,35 +112,26 @@ public class DBMeasurementsExporter implements MeasurementsExporter
 
     @Override
     public void flush() throws IOException {
-//        String query = "insert into benchmark(workload,recordcount,operationcount,threads,run,distribution,n_inserts,avg_inserts," +
-//                "min_inserts, max_inserts, n_reads, avg_reads, min_reads, max_reads," +
-//                "n_updates, avg_updates, min_update, max_updates) values ()";
-        String query = "insert into benchmark(";
-        String values = " values (";
-        int t = data.size()-1;
-        for (String key : data.keySet()){
-            query += key + (t>0?",":")");
-            values += data.get(key) + (t>0?",":")");
+
+        String values = "";
+        int t = keys.length-1;
+        for (String key : keys){
+            values += data.get(key) + (t>0?",":"\n");
             t--;
         }
-        query += values;
+//        System.out.println(values);
 
-        System.out.println(query);
+//        OutputStream out;
+        String exportFile = data.get("exportfile");
+//        out = new FileOutputStream(exportFile,true);
 
-        try {
 
-            Class.forName(Config.dbClass);
-            Connection connection = DriverManager.getConnection(Config.dbUrl,
-                    Config.username, Config.password);
-            Statement statement = connection.createStatement();
-            statement.execute(query);
-            connection.close();
-            System.out.println("Export Ok");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        File file = new File(exportFile);
+        FileUtils.writeStringToFile(file, values, true);
+
+//        FileWriter out = new FileWriter(exportFile, true);
+//        out.write(values);
+//        out.close();
     }
 
     public void close() throws IOException
