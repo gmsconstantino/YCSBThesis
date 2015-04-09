@@ -21,6 +21,8 @@ package com.yahoo.ycsb;
 import com.yahoo.ycsb.measurements.Measurements;
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 import com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -407,7 +409,7 @@ public class Client
 				out = System.out;
 			} else
 			{
-				out = new FileOutputStream(exportFile);
+				out = new FileOutputStream(exportFile, true);
 			}
 
 			// if no exporter is provided the default text one will be used
@@ -437,10 +439,15 @@ public class Client
 			}
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
+
+    public static boolean exit = true;
+    private static final Logger logger = LoggerFactory.getLogger(Client.class);
+
+
+    @SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
+        logger.debug("Client main");
 		String dbname;
 		Properties props=new Properties();
 		Properties fileprops=new Properties();
@@ -612,7 +619,7 @@ public class Client
 
 		if (!checkRequiredProperties(props))
 		{
-			System.exit(0);
+			exit(0);
 		}
 		
 		long maxExecutionTime = Integer.parseInt(props.getProperty(MAX_EXECUTION_TIME, "0"));
@@ -678,7 +685,7 @@ public class Client
 		{  
 			e.printStackTrace();
 			e.printStackTrace(System.out);
-			System.exit(0);
+			exit(0);
 		}
 
 		try
@@ -689,7 +696,7 @@ public class Client
 		{
 			e.printStackTrace();
 			e.printStackTrace(System.out);
-			System.exit(0);
+			exit(0);
 		}
 		
 		warningthread.interrupt();
@@ -727,7 +734,7 @@ public class Client
 			catch (UnknownDBException e)
 			{
 				System.out.println("Unknown DB "+dbname);
-				System.exit(0);
+				exit(0);
 			}
 
 			Thread t=new ClientThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount,targetperthreadperms);
@@ -796,7 +803,7 @@ public class Client
 		{
 			e.printStackTrace();
 			e.printStackTrace(System.out);
-			System.exit(0);
+			exit(0);
 		}
 
 		try
@@ -806,9 +813,15 @@ public class Client
 		{
 			System.err.println("Could not export measurements, error: " + e.getMessage());
 			e.printStackTrace();
-			System.exit(-1);
+			exit(-1);
 		}
 
-		System.exit(0);
+		exit(0);
 	}
+
+
+    public static void exit(int i){
+        if (exit)
+            System.exit(i);
+    }
 }
