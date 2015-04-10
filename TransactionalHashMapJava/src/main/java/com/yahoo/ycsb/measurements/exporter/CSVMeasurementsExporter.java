@@ -34,7 +34,7 @@ import java.util.Properties;
  */
 public class CSVMeasurementsExporter implements MeasurementsExporter
 {
-    String keys[] = {"workload", "recordcount", "operationcount", "threads", "distribution",
+    String keys[] = {"workloads", "recordcount", "operationcount", "threads", "distribution",
             "transactiontype", "run", "runtime", "throughput",
             "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
             "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates"};
@@ -47,7 +47,7 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
 
         data.put("exportfile", props.getProperty("exportfile"));
 
-        data.put("workload", props.getProperty("nameworkload","test"));
+        data.put("workloads", props.getProperty("nameworkload","test"));
         data.put("recordcount", props.getProperty("recordcount","-1"));
         data.put("operationcount", props.getProperty("operationcount","-1"));
         data.put("threads", props.getProperty("threadcount","-1"));
@@ -114,18 +114,16 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
     public void flush() throws IOException {
 
         String values = "";
+        String v;
         int t = keys.length-1;
         for (String key : keys){
-            values += data.get(key) + (t>0?",":"\n");
+            v = data.get(key);
+            v = (v==null)?" ":v;
+            values += v + (t>0?",":"\n");
             t--;
         }
-//        System.out.println(values);
 
-//        OutputStream out;
         String exportFile = data.get("exportfile");
-//        out = new FileOutputStream(exportFile,true);
-
-
         File file = new File(exportFile);
         FileUtils.writeStringToFile(file, values, true);
 

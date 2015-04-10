@@ -36,7 +36,7 @@ public class DBMeasurementsExporter implements MeasurementsExporter
     {
         data = new HashMap<String, String>();
 
-        data.put("workload", "\""+props.getProperty("nameworkload","test")+"\"");
+        data.put("workloads", "\""+props.getProperty("nameworkload","test")+"\"");
         data.put("recordcount", props.getProperty("recordcount","-1"));
         data.put("operationcount", props.getProperty("operationcount","-1"));
         data.put("threads", props.getProperty("threadcount","-1"));
@@ -101,7 +101,7 @@ public class DBMeasurementsExporter implements MeasurementsExporter
 
     @Override
     public void flush() throws IOException {
-//        String query = "insert into benchmark(workload,recordcount,operationcount,threads,run,distribution,n_inserts,avg_inserts," +
+//        String query = "insert into benchmark(workloads,recordcount,operationcount,threads,run,distribution,n_inserts,avg_inserts," +
 //                "min_inserts, max_inserts, n_reads, avg_reads, min_reads, max_reads," +
 //                "n_updates, avg_updates, min_update, max_updates) values ()";
         String query = "insert into benchmark(";
