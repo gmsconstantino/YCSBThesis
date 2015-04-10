@@ -748,10 +748,10 @@ public class Client
 		if (status)
 		{
 			boolean standardstatus=false;
-			if (props.getProperty("measurementtype","").compareTo("timeseries")==0) 
-			{
-				standardstatus=true;
-			}	
+//			if (props.getProperty("measurementtype","").compareTo("timeseries")==0)
+//			{
+//				standardstatus=true;
+//			}
 			statusthread=new StatusThread(threads,label,standardstatus);
 			statusthread.start();
 		}
