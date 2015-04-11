@@ -22,6 +22,7 @@ import com.yahoo.ycsb.db.dbSingleton;
 import com.yahoo.ycsb.measurements.Measurements;
 import database.TransactionFactory;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import pt.dct.cli.CLI;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,29 +40,6 @@ public class myClient
 {
     public static final String INTERACTIVE ="interactive";
     public static final String INTERACTIVE_DEFAULT ="false";
-
-    private static class ExitTrappedException extends SecurityException { }
-
-    private static void forbidSystemExitCall() {
-        final SecurityManager securityManager = new SecurityManager() {
-            public void checkPermission( Permission permission ) {
-                if( "exitVM".equals( permission.getName() ) ) {
-                    throw new ExitTrappedException() ;
-                }
-            }
-            @Override
-            public void checkExit(int status)
-            {
-                super.checkExit(status);
-                throw new ExitTrappedException();
-            }
-        } ;
-        System.setSecurityManager( securityManager ) ;
-    }
-
-    private static void enableSystemExitCall() {
-        System.setSecurityManager( null ) ;
-    }
 
     public static void main(String[] args) {
 
@@ -149,13 +127,10 @@ public class myClient
             args = newargs;
         }
 
-        forbidSystemExitCall() ;
-        try {
-            Client.main(args);
-        } catch( ExitTrappedException e ) {
-        } finally {
-//            enableSystemExitCall() ;
-        }
+        Client.exit = false;
+
+        // Loading
+        Client.main(args);
 
         System.out.println("\nRunning...\n");
 
@@ -183,12 +158,8 @@ public class myClient
 
         Measurements.getMeasurements().cleanMeasurements();
 
-        try {
-            Client.main(args);
-        } catch( ExitTrappedException e ) {
-        } finally {
-            enableSystemExitCall() ;
-        }
+        // Running
+        Client.main(args);
 
         if (interactive){
             System.out.println();
