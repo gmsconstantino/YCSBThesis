@@ -18,14 +18,9 @@ public class DatabaseClient extends DB implements TxDB {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseClient.class);
 
-    public static final String VERBOSE="myhashmap.verbose";
-    public static final String VERBOSE_DEFAULT="falses";
-
     Database<String, HashMap<String, String>> db;
     final TransactionFactory.type TYPE = dbSingleton.getInstance().getType();
     Transaction<String, HashMap<String, String>> t;
-
-    boolean verbose;
 
     public DatabaseClient() {}
 
@@ -38,7 +33,6 @@ public class DatabaseClient extends DB implements TxDB {
      */
     public void init() throws DBException {
         db = dbSingleton.getDatabase();
-        verbose = Boolean.parseBoolean(getProperties().getProperty(VERBOSE, VERBOSE_DEFAULT));
     }
 
     @Override
@@ -50,29 +44,20 @@ public class DatabaseClient extends DB implements TxDB {
     @Override
     public int read(String table, String key, Set<String> fields,
                     HashMap<String, ByteIterator> result) {
-
-        if (verbose)
-            System.out.print("READ "+table+" "+key+" [ ");
-
         try {
             HashMap<String, String> v = t.get(key);
 
             if (v != null) {
                 if (fields != null) {
-                    for (String f : fields) {
-                        if (verbose)
-                            System.out.print(f + "=" + v.get(f).toString() + " ");
+                    for (String field : fields) {
+                        result.put(field, new StringByteIterator(v.get(field)));
                     }
                 } else {
-                    for (String f : v.keySet()) {
-                        if (verbose)
-                            System.out.print(f + "=" + v.get(f).toString() + " ");
+                    for (String field : v.keySet()) {
+                        result.put(field, new StringByteIterator(v.get(field)));
                     }
                 }
             }
-
-            if (verbose)
-                System.out.println("]");
 
         } catch(TransactionTimeoutException e){
             logger.debug("Read Timeout",e);
@@ -103,20 +88,14 @@ public class DatabaseClient extends DB implements TxDB {
             v = t.get_to_update(key);
 
             if (v!=null) {
-                if (verbose)
-                    System.out.print("UPDATE " + table + " " + key + " [ ");
                 if (values != null) {
                     String value = "";
                     for (String k : values.keySet()) {
                         value = values.get(k).toString();
-                        if (verbose)
-                            System.out.print(k + "=" + value + " ");
                         v.put(k, value);
                     }
                     t.put(key, v);
                 }
-                if (verbose)
-                    System.out.println("]");
             }
         } catch(TransactionTimeoutException e){
             logger.debug("Update Timeout",e);
@@ -141,9 +120,6 @@ public class DatabaseClient extends DB implements TxDB {
                 value = values.get(k).toString();
                 v.put(k, value);
             }
-
-            if (verbose)
-                System.out.println("insertkey: " + key + " from table: " + table + " values: " + v.toString());
 
             t.put(key, v);
         } catch(TransactionTimeoutException e){
