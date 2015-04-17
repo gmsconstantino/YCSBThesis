@@ -1,8 +1,9 @@
 package com.yahoo.ycsb.db;
 
 import com.yahoo.ycsb.ByteIterator;
-import database.Database;
-import database.TransactionFactory;
+import fct.thesis.database.Database;
+import fct.thesis.database.DatabaseFactory;
+import fct.thesis.database.TransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class dbSingleton {
 
     private dbSingleton() {
         type = TransactionFactory.type.TWOPL;
-        db = new Database<String, HashMap<String, ByteIterator>>();
+        db = (Database<String, HashMap<String, ByteIterator>>) DatabaseFactory.createDatabase(type);
     }
 
     private Database<String, HashMap<String, ByteIterator>> getDb() {
@@ -51,5 +52,6 @@ public class dbSingleton {
 
     public void setType(TransactionFactory.type type) {
         this.type = type;
+        db = (Database<String, HashMap<String, ByteIterator>>) DatabaseFactory.createDatabase(type);
     }
 }

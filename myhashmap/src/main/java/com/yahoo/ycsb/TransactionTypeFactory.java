@@ -1,6 +1,7 @@
 package com.yahoo.ycsb;
 
-import database.TransactionFactory;
+
+import fct.thesis.database.TransactionFactory;
 
 /**
  * Created by gomes on 26/03/15.

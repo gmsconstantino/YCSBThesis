@@ -7,7 +7,7 @@ import java.io.File;
 
 import com.yahoo.ycsb.*;
 
-import database.*;
+import fct.thesis.database.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class DatabaseClient extends DB implements TxDB {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseClient.class);
 
     public static final String VERBOSE="myhashmap.verbose";
-    public static final String VERBOSE_DEFAULT="true";
+    public static final String VERBOSE_DEFAULT="falses";
 
     Database<String, HashMap<String, String>> db;
     final TransactionFactory.type TYPE = dbSingleton.getInstance().getType();

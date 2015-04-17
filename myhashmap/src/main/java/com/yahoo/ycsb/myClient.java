@@ -20,7 +20,7 @@ package com.yahoo.ycsb;
 
 import com.yahoo.ycsb.db.dbSingleton;
 import com.yahoo.ycsb.measurements.Measurements;
-import database.TransactionFactory;
+import fct.thesis.database.TransactionFactory;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import pt.dct.cli.CLI;
 
