@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 
@@ -68,14 +69,14 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 	int min=-1;
 	int max=-1;
 
-	private HashMap<Integer, int[]> returncodes;
+	private ConcurrentHashMap<Integer, int[]> returncodes;
 	
 	public OneMeasurementTimeSeries(String name, Properties props)
 	{
 		super(name);
 		_granularity=Integer.parseInt(props.getProperty(GRANULARITY,GRANULARITY_DEFAULT));
 		_measurements=new Vector<SeriesUnit>();
-		returncodes=new HashMap<Integer,int[]>();
+		returncodes=new ConcurrentHashMap<Integer,int[]>();
 	}
 	
 	void checkEndOfUnit(boolean forceend)
