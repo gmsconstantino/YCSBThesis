@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<configuration strict="true" status="OFF" monitorInterval="30">-->
+<configuration>
+    <!--<appenders>-->
+    <!--<appender type="Console" name="STDOUT">-->
+    <!--<layout type="PatternLayout" pattern="%d %p %C{1.} [%t] %m%n %ex"/>-->
+    <!--</appender>-->
+    <!--</appenders>-->
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>execution.log</file>
+        <append>true</append>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<logger name="fct.thesis" level="debug">-->
+        <!--<appender-ref ref="FILE"/>-->
+    <!--</logger>-->
+    <!--trace -> debug -> info -> warn -> error / fatal -->
+    <root level="info">
+        <appender-ref ref="FILE"/>
+    </root>
+
+
+</configuration>

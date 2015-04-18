@@ -149,6 +149,10 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
         String v;
         int t = keys.length-1;
         for (String key : keys){
+            values += key + (t>0?",":"\n");
+            t--;
+        }
+        for (String key : keys){
             v = data.get(key);
             v = (v==null)?" ":v;
             values += v + (t>0?",":"\n");
