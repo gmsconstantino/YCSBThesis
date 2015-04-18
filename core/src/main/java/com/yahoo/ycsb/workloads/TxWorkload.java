@@ -37,6 +37,7 @@ public class TxWorkload extends CoreWorkload {
 	double txread;
 	double txnonblindwrite;
 
+    Properties props;
 	IntegerGenerator transactionSize;
 	IntegerGenerator keychooser;
 	int recordcount;
@@ -85,6 +86,8 @@ public class TxWorkload extends CoreWorkload {
 	public void init(Properties p) throws WorkloadException
 	{
 		super.init(p);
+
+        props = p;
 		
 		txminsize  = Integer.parseInt(    p.getProperty(TX_SIZE_MIN_PROPERTY, TX_SIZE_MIN_PROPERTY_DEFAULT+""));
 		txmaxsize  = Integer.parseInt(    p.getProperty(TX_SIZE_MAX_PROPERTY, TX_SIZE_MAX_PROPERTY_DEFAULT+""));

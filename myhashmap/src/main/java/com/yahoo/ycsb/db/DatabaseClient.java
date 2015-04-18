@@ -149,11 +149,11 @@ public class DatabaseClient extends DB implements TxDB {
                 return ERROR;
         } catch(TransactionTimeoutException e){
             logger.debug("Commit Timeout",e);
-            logger.info("Commit Timeout - Transaction "+t.getId());
+//            logger.info("Commit Timeout - Transaction "+t.getId());
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Commit Abort",e);
-            logger.info("Commit Abort - Transaction "+t.getId());
+//            logger.info("Commit Abort - Transaction "+t.getId());
             return ERROR;
         }
     }

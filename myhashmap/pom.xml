@@ -8,7 +8,7 @@
         <version>0.1.4</version>
     </parent>
 
-    <artifactId>myhashmap-binding</artifactId>
+    <artifactId>myhashmap</artifactId>
     <name>TransactionalHash Binding</name>
     <packaging>jar</packaging>
 
@@ -149,6 +149,15 @@
                     <!--</execution>-->
                 <!--</executions>-->
             <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <excludes>resources/logback.xml</excludes>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

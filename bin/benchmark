@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import subprocess
+
+workloadL = {
+	"txworkloada",
+	# "txworkloadb",
+	# "txworkloadc",
+	# "workloadd",
+	# "workloade",
+	# "workloadf"
+}
+
+typeTr = {
+	# "TWOPL",
+	"OCC",
+	"OCCMV",
+	"SI",
+	# "BLOTTER"
+}
+
+# Space of key
+recordcount = [1000]#,1000000]
+
+# Number of operaction
+operationcount = [10000000]
+
+threads = [2,4,6,8,16]
+
+# ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/txworkloada", "-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", "-p", "timeseries.granularity=20", "-p", "transaction.type=SI", "-p", "exportfile=/local/cj.gomes/results.csv", "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", "-p", "recordcount=1000", "-p", "operationcount=10000000", "-p", "requestdistribution=uniform", "-p", "threadcount=32", "-p", "maxexecutiontime=40", "-s"]
+# ./bin/ycsb load_run myhashmap -P workloads/txworkloada -p myhashmap.verbose=false -p measurementtype=timeseries -p timeseries.granularity=20 -p transaction.type=SI -p exportfile=/local/cj.gomes/results.csv -p exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter -p recordcount=1000 -p operationcount=10000000 -p requestdistribution=uniform -p threadcount=32 -p maxexecutiontime=40 -s
+
+# for i in range(1,7):
+for workload in workloadL:
+	for no in operationcount:
+		for nk in recordcount:
+	
+		#/bin/ycsb load_run myhashmap -P workloads/workloadd -p myhashmap.verbose=false -p measurementtype=timeseries -p timeseries.granularity=20 -p transaction.type=OCCMV -p exportfile=./outTests/banana.txt
+			for typeT in typeTr:
+				for thread in threads:
+					ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/"+str(workload), \
+								"-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", \
+								"-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
+								"-p", "exportfile=/local/cj.gomes/results.csv", \
+								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
+								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
+								"-p", "requestdistribution=uniform", \
+								"-p", "threadcount="+str(thread), \
+								"-p", "maxexecutiontime=60", "-s"]
+					# print ycsb_command
+					subprocess.call(ycsb_command)
+
+
+# keys = ["workload", "recordcount", "operationcount", "threads", "run", "distribution", \
+                        # "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads", \
+                        # "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates"];

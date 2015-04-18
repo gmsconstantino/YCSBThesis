@@ -35,9 +35,11 @@ import java.util.Properties;
 public class CSVMeasurementsExporter implements MeasurementsExporter
 {
     String keys[] = {"workloads", "recordcount", "operationcount", "threads", "distribution",
-            "transactiontype", "run", "runtime", "throughput",
+            "transactiontype", "run", "runtime", "throughput","n_tx","avg_tx","min_tx","max_tx",
             "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
-            "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates"};
+            "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates",
+            "n_begins","avg_begins", "min_begins", "max_begins",
+            "n_commit", "avg_commit", "min_commit", "max_commit"};
     HashMap<String, String> data;
 
     public CSVMeasurementsExporter(OutputStream os, Properties props) throws IOException
@@ -106,6 +108,36 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
                 data.put("min_updates", d+"");
             } else if (measurement.equals("MaxLatency(us)")){
                 data.put("max_updates", d+"");
+            }
+        } else if (metric.equals("BEGIN")){
+            if (measurement.equals("Operations")){
+                data.put("n_begins", d+"");
+            } else if (measurement.equals("AverageLatency(us)")){
+                data.put("avg_begins", d+"");
+            } else if (measurement.equals("MinLatency(us)")){
+                data.put("min_begins", d+"");
+            } else if (measurement.equals("MaxLatency(us)")){
+                data.put("max_begins", d+"");
+            }
+        } else if (metric.equals("TX")){
+            if (measurement.equals("Operations")){
+                data.put("n_tx", d+"");
+            } else if (measurement.equals("AverageLatency(us)")){
+                data.put("avg_tx", d+"");
+            } else if (measurement.equals("MinLatency(us)")){
+                data.put("min_tx", d+"");
+            } else if (measurement.equals("MaxLatency(us)")){
+                data.put("max_tx", d+"");
+            }
+        } else if (metric.equals("COMMIT")){
+            if (measurement.equals("Operations")){
+                data.put("n_commit", d+"");
+            } else if (measurement.equals("AverageLatency(us)")){
+                data.put("avg_commit", d+"");
+            } else if (measurement.equals("MinLatency(us)")){
+                data.put("min_commit", d+"");
+            } else if (measurement.equals("MaxLatency(us)")){
+                data.put("max_commit", d+"");
             }
         }
     }
