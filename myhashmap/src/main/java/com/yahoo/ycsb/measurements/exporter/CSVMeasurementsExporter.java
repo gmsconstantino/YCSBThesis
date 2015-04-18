@@ -119,7 +119,7 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
             } else if (measurement.equals("MaxLatency(us)")){
                 data.put("max_begins", d+"");
             }
-        } else if (metric.equals("TX")){
+        } else if (metric.equals("Tx")){
             if (measurement.equals("Operations")){
                 data.put("n_tx", d+"");
             } else if (measurement.equals("AverageLatency(us)")){
