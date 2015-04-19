@@ -17,6 +17,8 @@ public class TransactionTypeFactory {
             return TransactionFactory.type.TWOPL;
         } else if (value.toUpperCase().equals("OCC")){
             return TransactionFactory.type.OCC;
+        } else if (value.toUpperCase().equals("OCC2")){
+            return TransactionFactory.type.OCC2;
         } else if (value.toUpperCase().equals("OCCMV")) {
             return TransactionFactory.type.OCC_MULTI;
         } else if(value.toUpperCase().equals("SI")) {
