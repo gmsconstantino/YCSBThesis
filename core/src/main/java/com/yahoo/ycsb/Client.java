@@ -147,7 +147,8 @@ class StatusThread extends Thread
  */
 class ClientThread extends Thread
 {
-	DB _db;
+    private static final Logger logger = LoggerFactory.getLogger(ClientThread.class);
+    DB _db;
 	boolean _dotransactions;
 	Workload _workload;
 	int _opcount;
@@ -242,6 +243,7 @@ class ClientThread extends Thread
 
 					if (!_workload.doTransaction(_db,_workloadstate))
 					{
+                        logger.error("Thread "+Thread.currentThread().getName()+" Break Execution");
 						break;
 					}
 
