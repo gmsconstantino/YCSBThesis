@@ -35,7 +35,7 @@ import java.util.Properties;
 public class CSVMeasurementsExporter implements MeasurementsExporter
 {
     String keys[] = {"workloads", "recordcount", "operationcount", "threads", "distribution",
-            "transactiontype", "run", "runtime", "throughput","n_tx","avg_tx","min_tx","max_tx",
+            "transactiontype", "run", "runtime", "throughput","tx_throughput","n_tx","avg_tx","min_tx","max_tx",
             "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
             "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates",
             "n_begins","avg_begins", "min_begins", "max_begins",
@@ -144,6 +144,11 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
 
     @Override
     public void flush() throws IOException {
+
+        if (data.get("run").equals("1")) {
+            double txThroughput = 1000.0 * (Double.parseDouble(data.get("n_tx"))) / (Double.parseDouble(data.get("runtime")));
+            data.put("tx_throughput", txThroughput + "");
+        }
 
         String values = "";
         String v;
