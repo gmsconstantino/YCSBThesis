@@ -61,11 +61,11 @@ public class DatabaseClient extends DB implements TxDB {
 
         } catch(TransactionTimeoutException e){
             logger.debug("Read Timeout",e);
-            logger.info("Read Timeout - Transaction "+t.getId());
+            logger.info("Read Timeout - Transaction "+t.getId()+" | "+e.getMessage());
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Read Abort",e);
-            logger.info("Read Abort - Transaction "+t.getId());
+            logger.info("Read Abort - Transaction "+t.getId()+" | "+e.getMessage());
             return ERROR;
         }
 
@@ -99,11 +99,11 @@ public class DatabaseClient extends DB implements TxDB {
             }
         } catch(TransactionTimeoutException e){
             logger.debug("Update Timeout",e);
-            logger.info("Update Timeout - Transaction "+t.getId());
+            logger.info("Update Timeout - Transaction "+t.getId()+" | "+e.getMessage());
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Update Abort",e);
-            logger.info("Update Abort - Transaction "+t.getId());
+            logger.info("Update Abort - Transaction "+t.getId()+" | "+e.getMessage());
             return ERROR;
         }
 
@@ -124,11 +124,11 @@ public class DatabaseClient extends DB implements TxDB {
             t.put(key, v);
         } catch(TransactionTimeoutException e){
             logger.debug("Insert Timeout",e);
-            logger.info("Insert Timeout - Transaction "+t.getId());
+            logger.info("Insert Timeout - Transaction "+t.getId()+" | "+e.getMessage());
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Insert Abort",e);
-            logger.info("Insert Abort - Transaction "+t.getId());
+            logger.info("Insert Abort - Transaction "+t.getId()+" | "+e.getMessage());
             return ERROR;
         }
         return OK;
