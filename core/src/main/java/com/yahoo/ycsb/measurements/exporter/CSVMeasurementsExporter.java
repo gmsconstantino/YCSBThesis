@@ -16,16 +16,11 @@
  */
 package com.yahoo.ycsb.measurements.exporter;
 
-import com.opencsv.CSVWriter;
-import com.yahoo.ycsb.db.Config;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -35,7 +30,8 @@ import java.util.Properties;
 public class CSVMeasurementsExporter implements MeasurementsExporter
 {
     String keys[] = {"workloads", "recordcount", "operationcount", "threads", "distribution",
-            "transactiontype", "run", "runtime", "tx_throughput","n_tx","avg_tx","min_tx","max_tx",
+            "transactiontype", "run", "runtime", "tx_throughput","n_tx","avg_tx","min_tx","max_tx","Return=0",
+            "Return=-1","Return=-2","Return=-3",
             "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
             "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates",
             "n_begins","avg_begins", "min_begins", "max_begins",
@@ -128,6 +124,8 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
                 data.put("min_tx", d+"");
             } else if (measurement.equals("MaxLatency(us)")){
                 data.put("max_tx", d+"");
+            } else if (measurement.startsWith("Return=")){
+                data.put(measurement, d+"");
             }
         } else if (metric.equals("COMMIT")){
             if (measurement.equals("Operations")){
@@ -167,6 +165,18 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
 //        FileWriter out = new FileWriter(exportFile, true);
 //        out.write(values);
 //        out.close();
+    }
+
+    public void writeHeader() throws IOException {
+        String exportFile = data.get("exportfile");
+        File file = new File(exportFile);
+        String header = "";
+        int t = keys.length-1;
+        for (String key : keys){
+            header += key + (t>0?",":"\n");
+            t--;
+        }
+        FileUtils.writeStringToFile(file, header, true);
     }
 
     public void close() throws IOException

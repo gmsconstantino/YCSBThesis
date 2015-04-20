@@ -132,34 +132,46 @@ public class myClient
         // Loading
         Client.main(args);
 
-        System.out.println("\nRunning...\n");
+//        System.out.println("Press ENTER to continue!!");
+//        Scanner in = new Scanner(System.in);
+//        in.nextLine();
+
+        int[] test_thread = new int[]{1,2,4,8,16,32,64};
+
+        for (int Th : test_thread) {
+            System.out.println("\nTest with threads " + Th);
+            System.out.println("Running...\n");
 
 
-        for (int i=0; i < args.length ; i++){
-            if (args[i].equals("-load"))
-                args[i]="-t";
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("-load"))
+                    args[i] = "-t";
+                else if (args[i].startsWith("threadcount"))
+                    args[i] = "threadcount="+Th;
+            }
+
+            if (path != null) {
+                String newargs[] = new String[args.length + 2];
+                System.arraycopy(args, 0, newargs, 0, args.length);
+
+
+                HashMap<String, String> h = new HashMap<String, String>();
+                h.put("exec", "run");
+                StrSubstitutor sub = new StrSubstitutor(h);
+                String fpath = sub.replace(props.getProperty("exportfile"));
+                newargs[newargs.length - 2] = "-p";
+                newargs[newargs.length - 1] = "exportfile=" + fpath;
+
+                args = newargs;
+            }
+
+
+            Measurements.getMeasurements().cleanMeasurements();
+
+            // Running
+            Client.main(args);
+
         }
-
-        if (path!=null){
-            String newargs[] = new String[args.length+2];
-            System.arraycopy(args,0,newargs,0,args.length);
-
-
-            HashMap<String,String> h = new HashMap<String, String>();
-            h.put("exec","run");
-            StrSubstitutor sub = new StrSubstitutor(h);
-            String fpath = sub.replace(props.getProperty("exportfile"));
-            newargs[newargs.length-2] = "-p";
-            newargs[newargs.length-1] = "exportfile="+fpath;
-
-            args = newargs;
-        }
-
-
-        Measurements.getMeasurements().cleanMeasurements();
-
-        // Running
-        Client.main(args);
 
         if (interactive){
             System.out.println();

@@ -7,6 +7,7 @@ import java.io.File;
 
 import com.yahoo.ycsb.*;
 
+import com.yahoo.ycsb.measurements.Measurements;
 import fct.thesis.database.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +63,12 @@ public class DatabaseClient extends DB implements TxDB {
         } catch(TransactionTimeoutException e){
             logger.debug("Read Timeout",e);
             logger.info("Read Timeout - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Read Abort",e);
             logger.info("Read Abort - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
 
@@ -100,10 +103,12 @@ public class DatabaseClient extends DB implements TxDB {
         } catch(TransactionTimeoutException e){
             logger.debug("Update Timeout",e);
             logger.info("Update Timeout - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Update Abort",e);
             logger.info("Update Abort - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
 
@@ -125,10 +130,12 @@ public class DatabaseClient extends DB implements TxDB {
         } catch(TransactionTimeoutException e){
             logger.debug("Insert Timeout",e);
             logger.info("Insert Timeout - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Insert Abort",e);
             logger.info("Insert Abort - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
         return OK;
@@ -150,10 +157,12 @@ public class DatabaseClient extends DB implements TxDB {
         } catch(TransactionTimeoutException e){
             logger.debug("Commit Timeout",e);
             logger.info("Commit Timeout - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
             logger.debug("Commit Abort",e);
             logger.info("Commit Abort - Transaction "+t.getId()+" | "+e.getMessage());
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
     }

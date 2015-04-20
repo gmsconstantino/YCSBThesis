@@ -19,15 +19,14 @@ package com.yahoo.ycsb;
 
 
 import com.yahoo.ycsb.measurements.Measurements;
+import com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter;
+import com.yahoo.ycsb.measurements.exporter.JSONMeasurementsExporter;
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 import com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -403,6 +402,7 @@ public class Client
         String exportFile = null;
 		try
 		{
+            boolean writeHeader = false;
 			// if no destination file is provided the results will be written to stdout
 			OutputStream out;
 			exportFile = props.getProperty("exportfile");
@@ -411,6 +411,8 @@ public class Client
 				out = System.out;
 			} else
 			{
+                File file = new File(exportFile);
+                writeHeader = (file.exists()) ? false: true;
 				out = new FileOutputStream(exportFile, true);
 			}
 
@@ -426,6 +428,10 @@ public class Client
 				e.printStackTrace();
 				exporter = new TextMeasurementsExporter(out, null);
 			}
+
+            if (writeHeader && exporter instanceof CSVMeasurementsExporter){
+                ((CSVMeasurementsExporter) exporter).writeHeader();
+            }
 
 			exporter.write("OVERALL", "RunTime(ms)", runtime);
 			double throughput = 1000.0 * ((double) opcount) / ((double) runtime);
