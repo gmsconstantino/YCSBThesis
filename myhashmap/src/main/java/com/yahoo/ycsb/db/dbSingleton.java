@@ -16,7 +16,7 @@ public class dbSingleton {
 
     private static final Logger logger = LoggerFactory.getLogger(dbSingleton.class);
 
-    Database<String, HashMap<String, ByteIterator>> db;
+    Database<Long, HashMap<String, ByteIterator>> db;
     TransactionFactory.type type;
 
     private static dbSingleton ourInstance = null;
@@ -39,10 +39,10 @@ public class dbSingleton {
 
     private dbSingleton() {
         type = TransactionFactory.type.TWOPL;
-        db = (Database<String, HashMap<String, ByteIterator>>) DatabaseFactory.createDatabase(type);
+        db = (Database<Long, HashMap<String, ByteIterator>>) DatabaseFactory.createDatabase(type);
     }
 
-    private Database<String, HashMap<String, ByteIterator>> getDb() {
+    private Database<Long, HashMap<String, ByteIterator>> getDb() {
         return db;
     }
 
@@ -52,6 +52,6 @@ public class dbSingleton {
 
     public void setType(TransactionFactory.type type) {
         this.type = type;
-        db = (Database<String, HashMap<String, ByteIterator>>) DatabaseFactory.createDatabase(type);
+        db = (Database<Long, HashMap<String, ByteIterator>>) DatabaseFactory.createDatabase(type);
     }
 }
