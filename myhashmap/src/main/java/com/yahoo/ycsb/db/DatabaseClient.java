@@ -19,9 +19,9 @@ public class DatabaseClient extends DB implements TxDB {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseClient.class);
 
-    Database<Long, HashMap<String, String>> db;
+    Database<Integer, HashMap<String, String>> db;
     final TransactionFactory.type TYPE = dbSingleton.getInstance().getType();
-    Transaction<Long, HashMap<String, String>> t;
+    Transaction<Integer, HashMap<String, String>> t;
 
     public DatabaseClient() {}
 
@@ -46,7 +46,7 @@ public class DatabaseClient extends DB implements TxDB {
     public int read(String table, String key, Set<String> fields,
                     HashMap<String, ByteIterator> result) {
         try {
-            HashMap<String, String> v = t.get(Long.parseLong(key));
+            HashMap<String, String> v = t.get(Integer.parseInt(key));
 
             if (v != null) {
                 if (fields != null) {
@@ -88,7 +88,7 @@ public class DatabaseClient extends DB implements TxDB {
 
         HashMap<String,String> v = null;
         try {
-            v = t.get_to_update(Long.parseLong(key));
+            v = t.get_to_update(Integer.parseInt(key));
 
             if (v!=null) {
                 if (values != null) {
@@ -97,7 +97,7 @@ public class DatabaseClient extends DB implements TxDB {
                         value = values.get(k).toString();
                         v.put(k, value);
                     }
-                    t.put(Long.parseLong(key), v);
+                    t.put(Integer.parseInt(key), v);
                 }
             }
         } catch(TransactionTimeoutException e){
@@ -126,7 +126,7 @@ public class DatabaseClient extends DB implements TxDB {
                 v.put(k, value);
             }
 
-            t.put(Long.parseLong(key), v);
+            t.put(Integer.parseInt(key), v);
         } catch(TransactionTimeoutException e){
             logger.debug("Insert Timeout",e);
             logger.info("Insert Timeout - Transaction "+t.getId()+" | "+e.getMessage());
