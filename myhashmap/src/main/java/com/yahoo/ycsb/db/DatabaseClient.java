@@ -88,7 +88,7 @@ public class DatabaseClient extends DB implements TxDB {
 
         HashMap<String,String> v = null;
         try {
-            v = t.get_to_update(Integer.parseInt(key));
+            v = t.get(Integer.parseInt(key));
 
             if (v!=null) {
                 if (values != null) {
