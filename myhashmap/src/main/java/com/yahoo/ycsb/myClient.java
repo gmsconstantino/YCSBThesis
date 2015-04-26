@@ -200,5 +200,7 @@ public class myClient
             CommandLine.main(newArgs);
         }
 
+        dbSingleton.getDatabase().cleanup();
+
     }
 }

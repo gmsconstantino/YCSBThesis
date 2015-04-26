@@ -36,6 +36,14 @@ public class DatabaseClient extends DB implements TxDB {
         db = dbSingleton.getDatabase();
     }
 
+    /**
+     * Cleanup any state for this DB.
+     * Called once per DB instance; there is one DB instance per client thread.
+     */
+    public void cleanup() throws DBException
+    {
+    }
+
     @Override
     public UUID beginTx() {
         t = db.newTransaction(TYPE);
