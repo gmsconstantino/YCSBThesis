@@ -28,7 +28,7 @@
         <!--<appender-ref ref="FILE"/>-->
     <!--</logger>-->
     <!--trace -> debug -> info -> warn -> error / fatal -->
-    <root level="info">
+    <root level="error">
         <appender-ref ref="FILE"/>
     </root>
 
