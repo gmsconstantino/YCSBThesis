@@ -17,7 +17,7 @@ typeTr = [
 	"TWOPL",
 	"OCC",
 	"OCCNA",
-	"OCCLL"
+	"OCCLL",
 	"OCCMV",
 	"SI",
 	"BLOTTER"
@@ -64,36 +64,37 @@ ycsb_home = get_ycsb_home()
 
 # for i in range(1,7):
 for workload in workloadL:
-	for no in operationcount:
-		for nk in recordcount:
-	
-			for typeT in typeTr:
-				reset_command = ["java", "-cp", os.pathsep.join(find_jars(ycsb_home, 'myhashmap')), \
-                         "thrift.ResetDB", typeT, hostname, port];
+    for no in operationcount:
+        for nk in recordcount:
+            for typeT in typeTr:
+                print workload+" "+str(typeT)+" "+str(nk)
+                reset_command = ["java", "-cp", os.pathsep.join(find_jars(ycsb_home, 'myhashmap')), \
+                "thrift.ResetDB", typeT, hostname, port];
                 subprocess.call(reset_command)
 
                 load_command = ["./bin/ycsb", "load", "myhashmap", "-P", "workloads/"+str(workload), \
-                                "-p", "measurementtype=timeseries", \
-                                "-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
-                                "-p", "exportfile=/local/cj.gomes/result/result_load.csv", \
-                                "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
-                                "-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
-                                "-p", "db.ip="+hostname, \
-                                "-p", "db.port="+port, "-s"]
+                "-p", "measurementtype=timeseries", \
+                "-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
+                "-p", "exportfile=/local/cj.gomes/result/result_load.csv", \
+                "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
+                "-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
+                "-p", "db.ip="+hostname, \
+                "-p", "db.port="+port, "-s"]
                 subprocess.call(load_command)
 
                 for thread in threads:
-					ycsb_command = ["./bin/ycsb", "run", "myhashmap", "-P", "workloads/"+str(workload), \
-								"-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", \
-								"-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
-								"-p", "exportfile=/local/cj.gomes/result/result_run.csv", \
-								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
-								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
-								"-p", "requestdistribution="+distribution, \
-								"-p", "threadcount="+str(thread), \
-								"-p", "maxexecutiontime=60", \
-                                "-p", "db.ip="+hostname, \
-                                "-p", "db.port="+port, "-s"]
-					# print ycsb_command
-					subprocess.call(ycsb_command)
+                    ycsb_command = ["./bin/ycsb", "run", "myhashmap", "-P", "workloads/"+str(workload), \
+                    "-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", \
+                    "-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
+                    "-p", "exportfile=/local/cj.gomes/result/result_run.csv", \
+                    "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
+                    "-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
+                    "-p", "requestdistribution="+distribution, \
+                    "-p", "threadcount="+str(thread), \
+                    "-p", "maxexecutiontime=60", \
+                    "-p", "db.ip="+hostname, \
+                    "-p", "db.port="+port, "-s"]
+                    # print ycsb_command
+                    subprocess.call(ycsb_command)
+                    # print thread
 
