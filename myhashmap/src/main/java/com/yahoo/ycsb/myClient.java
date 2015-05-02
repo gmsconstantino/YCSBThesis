@@ -18,19 +18,14 @@
 package com.yahoo.ycsb;
 
 
-import com.yahoo.ycsb.db.dbSingleton;
 import com.yahoo.ycsb.measurements.Measurements;
-import fct.thesis.database.TransactionFactory;
 import org.apache.commons.lang3.text.StrSubstitutor;
-import pt.dct.cli.CLI;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.Permission;
 import java.util.*;
 
-//import org.apache.log4j.BasicConfigurator;
 
 
 /**
@@ -105,8 +100,8 @@ public class myClient
         }
 
         System.out.println("Database Transactions Type : "+ props.getProperty("transaction.type","TWOPL"));
-        TransactionFactory.type type = TransactionTypeFactory.getType(props.getProperty("transaction.type","TWOPL"));
-        dbSingleton.setTransactionype(type);
+//        TransactionFactory.type type = TransactionTypeFactory.getType(props.getProperty("transaction.type","TWOPL"));
+//        dbSingleton.setTransactionype(type);
 
         boolean interactive =  Boolean.parseBoolean(props.getProperty(INTERACTIVE, INTERACTIVE_DEFAULT));
 
@@ -136,7 +131,8 @@ public class myClient
 //        Scanner in = new Scanner(System.in);
 //        in.nextLine();
 
-        int[] test_thread = new int[]{1,2,4,8,16,32,64};
+//        int[] test_thread = new int[]{1,2,4,8,16,32,64};
+        int[] test_thread = new int[]{8};
 
         for (int Th : test_thread) {
             System.out.println("\nTest with threads " + Th);
