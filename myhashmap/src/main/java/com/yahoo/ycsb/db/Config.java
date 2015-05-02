@@ -10,4 +10,12 @@ public class Config {
     public static final String username = "b2110711a23557";
     public static final String password = "f8a4b880";
 
+
+    /** The URL to connect to the database. */
+    public static final String SERVER_IP = "db.ip";
+    public static final String SERVER_IP_DEFAULT = "localhost";
+
+    /** The user name to use to connect to the database. */
+    public static final String SERVER_PORT = "db.port";
+    public static final String SERVER_PORT_DEFAULT = "9090";
 }

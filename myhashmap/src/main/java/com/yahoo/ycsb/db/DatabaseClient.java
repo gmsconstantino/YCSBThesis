@@ -1,6 +1,8 @@
 package com.yahoo.ycsb.db;
 
 import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.Map.Entry;
 import java.io.File;
@@ -9,19 +11,26 @@ import com.yahoo.ycsb.*;
 
 import com.yahoo.ycsb.measurements.Measurements;
 import fct.thesis.database.*;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import thrift.server.AbortException;
+import thrift.server.DBService;
+import thrift.server.NoSuchKeyException;
 
 /**
  * Created by gomes on 17/03/15.
  */
 public class DatabaseClient extends DB implements TxDB {
 
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseClient.class);
-
-    Database<String, HashMap<String, String>> db;
-    final TransactionFactory.type TYPE = dbSingleton.getInstance().getType();
-    Transaction<String, HashMap<String, String>> t;
+    private Properties props;
+    TTransport transport;
+    DBService.Client client;
 
     public DatabaseClient() {}
 
@@ -33,42 +42,65 @@ public class DatabaseClient extends DB implements TxDB {
      * one DB instance per client thread.
      */
     public void init() throws DBException {
-        db = dbSingleton.getDatabase();
+        props = getProperties();
+
+        String ip = props.getProperty(Config.SERVER_IP,Config.SERVER_IP_DEFAULT);
+        int port = Integer.parseInt(props.getProperty(Config.SERVER_PORT,Config.SERVER_PORT_DEFAULT));
+
+        System.out.println("Connect to: "+ip+":"+port);
+
+        try {
+            transport = new TSocket(ip, port);
+            transport.open();
+            TProtocol protocol = new TBinaryProtocol(transport);
+            client = new DBService.Client(protocol);
+        } catch (TTransportException e) {
+            e.printStackTrace();
+        } catch (TException x) {
+            x.printStackTrace();
+        }
+    }
+
+    @Override
+    public void cleanup() throws DBException {
+        super.cleanup();
+        transport.close();
     }
 
     @Override
     public UUID beginTx() {
-        t = db.newTransaction(TYPE);
-        return new UUID(0L,t.getId());
+        try {
+            return new UUID(0L,client.txn_begin());
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public int read(String table, String key, Set<String> fields,
                     HashMap<String, ByteIterator> result) {
         try {
-            HashMap<String, String> v = t.get(key);
+            Map<String, ByteBuffer> v = client.get(key);
 
             if (v != null) {
                 if (fields != null) {
                     for (String field : fields) {
-                        result.put(field, new StringByteIterator(v.get(field)));
+                        result.put(field, new StringByteIterator(new String(v.get(field).array(), Charset.forName("UTF-8"))));
                     }
                 } else {
                     for (String field : v.keySet()) {
-                        result.put(field, new StringByteIterator(v.get(field)));
+                        result.put(field, new StringByteIterator(new String(v.get(field).array(), Charset.forName("UTF-8"))));
                     }
                 }
             }
 
-        } catch(TransactionTimeoutException e){
-            logger.debug("Read Timeout",e);
-            logger.info("Read Timeout - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
+        } catch (NoSuchKeyException e) {
+            return OK;
+        } catch (AbortException e){
             return ERROR;
-        } catch (TransactionAbortException e){
-            logger.debug("Read Abort",e);
-            logger.info("Read Abort - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
+        } catch (TException e) {
+            e.printStackTrace();
             return ERROR;
         }
 
@@ -86,29 +118,27 @@ public class DatabaseClient extends DB implements TxDB {
     public int update(String table, String key, HashMap<String, ByteIterator> values) {
 //        System.out.println("updatekey: " + key + " from table: " + table);
 
-        HashMap<String,String> v = null;
+        Map<String, ByteBuffer> v = null;
         try {
-            v = t.get_to_update(key);
+            try {
+                v = client.get(key);
+            } catch (NoSuchKeyException e) {
+            }
 
             if (v!=null) {
                 if (values != null) {
                     String value = "";
                     for (String k : values.keySet()) {
                         value = values.get(k).toString();
-                        v.put(k, value);
+                        v.put(k, ByteBuffer.wrap(value.getBytes(Charset.forName("UTF-8"))));
                     }
-                    t.put(key, v);
+                    client.put(key, v);
                 }
             }
-        } catch(TransactionTimeoutException e){
-            logger.debug("Update Timeout",e);
-            logger.info("Update Timeout - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
+        } catch (AbortException e){
             return ERROR;
-        } catch (TransactionAbortException e){
-            logger.debug("Update Abort",e);
-            logger.info("Update Abort - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
+        } catch (TException e) {
+            e.printStackTrace();
             return ERROR;
         }
 
@@ -119,23 +149,18 @@ public class DatabaseClient extends DB implements TxDB {
     public int insert(String table, String key, HashMap<String, ByteIterator> values) {
 
         try {
-            HashMap<String, String> v = new HashMap<String, String>();
+            Map<String, ByteBuffer> v = new HashMap<String, ByteBuffer>();
             String value = "";
             for (String k : values.keySet()) {
                 value = values.get(k).toString();
-                v.put(k, value);
+                v.put(k, ByteBuffer.wrap(value.getBytes(Charset.forName("UTF-8"))));
             }
 
-            t.put(key, v);
-        } catch(TransactionTimeoutException e){
-            logger.debug("Insert Timeout",e);
-            logger.info("Insert Timeout - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
+            client.put(key, v);
+        } catch (AbortException e){
             return ERROR;
-        } catch (TransactionAbortException e){
-            logger.debug("Insert Abort",e);
-            logger.info("Insert Abort - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
+        } catch (TException e) {
+            e.printStackTrace();
             return ERROR;
         }
         return OK;
@@ -150,19 +175,14 @@ public class DatabaseClient extends DB implements TxDB {
     @Override
     public int commit(UUID txid) {
         try {
-            if (t.commit())
+            if (client.txn_commit())
                 return OK;
             else
                 return ERROR;
-        } catch(TransactionTimeoutException e){
-            logger.debug("Commit Timeout",e);
-            logger.info("Commit Timeout - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
+        } catch (AbortException e){
             return ERROR;
-        } catch (TransactionAbortException e){
-            logger.debug("Commit Abort",e);
-            logger.info("Commit Abort - Transaction "+t.getId()+" | "+e.getMessage());
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
+        } catch (TException e) {
+            e.printStackTrace();
             return ERROR;
         }
     }

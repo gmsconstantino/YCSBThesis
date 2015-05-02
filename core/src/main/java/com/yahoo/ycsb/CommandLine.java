@@ -50,17 +50,19 @@ public class CommandLine
 	 System.out.println();
       }
 
-      public static void help()
-      {
-	 System.out.println("Commands:");
-	 System.out.println("  read key [field1 field2 ...] - Read a record");
-	 System.out.println("  scan key recordcount [field1 field2 ...] - Scan starting at key");
-	 System.out.println("  insert key name1=value1 [name2=value2 ...] - Insert a new record");
-	 System.out.println("  update key name1=value1 [name2=value2 ...] - Update a record");
-	 System.out.println("  delete key - Delete a record");
-	 System.out.println("  table [tablename] - Get or [set] the name of the table");
-	 System.out.println("  quit - Quit");
-      }
+    public static void help()
+    {
+        System.out.println("Commands:");
+        System.out.println("  read key [field1 field2 ...] - Read a record");
+        System.out.println("  scan key recordcount [field1 field2 ...] - Scan starting at key");
+        System.out.println("  insert key name1=value1 [name2=value2 ...] - Insert a new record");
+        System.out.println("  update key name1=value1 [name2=value2 ...] - Update a record");
+        System.out.println("  delete key - Delete a record");
+        System.out.println("  table [tablename] - Get or [set] the name of the table");
+        System.out.println("  begin - Start Transaction");
+        System.out.println("  commit - Commit Transaction");
+        System.out.println("  quit - Quit");
+    }
       
       public static void main(String[] args)
       {
@@ -397,6 +399,23 @@ public class CommandLine
 		  System.out.println("Return code: "+ret);
 	       }		  
 	    }
+        else if (tokens[0].compareTo("begin")==0)
+        {
+            int ret=-1;
+            if(db instanceof TxDB)
+                if(((TxDB) db).beginTx()!=null);
+                    ret = 0;
+            System.out.println("Return code: "+ret);
+
+        }
+        else if (tokens[0].compareTo("commit")==0)
+        {
+            int ret=-1;
+            if(db instanceof TxDB)
+                ret = ((TxDB) db).commit(null);
+            System.out.println("Return code: "+ret);
+
+        }
 	    else
 	    {
 	       System.out.println("Error: unknown command \""+tokens[0]+"\"");
