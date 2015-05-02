@@ -23,7 +23,7 @@ typeTr = [
 	"BLOTTER"
 ]
 
-hostname = 'node10'
+hostname = sys.argv[1]
 port=str(9090)
 
 # Space of key
@@ -75,12 +75,9 @@ for workload in workloadL:
                 load_command = ["./bin/ycsb", "load", "myhashmap", "-P", "workloads/"+str(workload), \
                                 "-p", "measurementtype=timeseries", \
                                 "-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
-                                "-p", "exportfile=/local/cj.gomes/result_load.csv", \
+                                "-p", "exportfile=/local/cj.gomes/result/result_load.csv", \
                                 "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
                                 "-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
-                                "-p", "requestdistribution="+distribution, \
-                                "-p", "threadcount="+str(thread), \
-                                "-p", "maxexecutiontime=60", \
                                 "-p", "db.ip="+hostname, \
                                 "-p", "db.port="+port, "-s"]
                 subprocess.call(load_command)
@@ -89,7 +86,7 @@ for workload in workloadL:
 					ycsb_command = ["./bin/ycsb", "run", "myhashmap", "-P", "workloads/"+str(workload), \
 								"-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", \
 								"-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
-								"-p", "exportfile=/local/cj.gomes/result_run.csv", \
+								"-p", "exportfile=/local/cj.gomes/result/result_run.csv", \
 								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
 								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
 								"-p", "requestdistribution="+distribution, \

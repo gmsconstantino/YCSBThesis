@@ -20,11 +20,8 @@ package com.yahoo.ycsb;
 
 import com.yahoo.ycsb.measurements.Measurements;
 import com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter;
-import com.yahoo.ycsb.measurements.exporter.JSONMeasurementsExporter;
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 import com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -146,7 +143,6 @@ class StatusThread extends Thread
  */
 class ClientThread extends Thread
 {
-    private static final Logger logger = LoggerFactory.getLogger(ClientThread.class);
     DB _db;
 	boolean _dotransactions;
 	Workload _workload;
@@ -242,7 +238,6 @@ class ClientThread extends Thread
 
 					if (!_workload.doTransaction(_db,_workloadstate))
 					{
-                        logger.error("Thread "+Thread.currentThread().getName()+" Break Execution");
 						break;
 					}
 
@@ -449,13 +444,10 @@ public class Client
 	}
 
     public static boolean exit = true;
-    private static final Logger logger = LoggerFactory.getLogger(Client.class);
-
 
     @SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
-        logger.debug("Client main");
 		String dbname;
 		Properties props=new Properties();
 		Properties fileprops=new Properties();
