@@ -69,7 +69,7 @@ for workload in workloadL:
 	
 			for typeT in typeTr:
 				reset_command = ["java", "-cp", os.pathsep.join(find_jars(ycsb_home, 'myhashmap')), \
-                         "thrift.ResetDB", typeT, "localhost", port];
+                         "thrift.ResetDB", typeT, hostname, port];
                 subprocess.call(reset_command)
 
                 load_command = ["./bin/ycsb", "load", "myhashmap", "-P", "workloads/"+str(workload), \
