@@ -1,36 +1,23 @@
 package com.yahoo.ycsb.db;
 
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.*;
-import java.util.Map.Entry;
-import java.io.File;
 
 import com.yahoo.ycsb.*;
 
 import com.yahoo.ycsb.measurements.Measurements;
 import fct.thesis.database.*;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import thrift.server.AbortException;
-import thrift.server.DBService;
-import thrift.server.NoSuchKeyException;
+import thrift.DatabaseSingleton;
 
 /**
  * Created by gomes on 17/03/15.
  */
 public class DatabaseClient extends DB implements TxDB {
 
-    private Properties props;
-    TTransport transport;
-    DBService.Client client;
+    Database<Integer, HashMap<String, String>> db;
+    final TransactionFactory.type TYPE = DatabaseSingleton.getInstance().getType();
+    Transaction<Integer, HashMap<String, String>> t;
 
     public DatabaseClient() {}
 
@@ -42,65 +29,46 @@ public class DatabaseClient extends DB implements TxDB {
      * one DB instance per client thread.
      */
     public void init() throws DBException {
-        props = getProperties();
-
-        String ip = props.getProperty(Config.SERVER_IP,Config.SERVER_IP_DEFAULT);
-        int port = Integer.parseInt(props.getProperty(Config.SERVER_PORT,Config.SERVER_PORT_DEFAULT));
-
-        System.out.println("Connect to: "+ip+":"+port);
-
-        try {
-            transport = new TSocket(ip, port);
-            transport.open();
-            TProtocol protocol = new TBinaryProtocol(transport);
-            client = new DBService.Client(protocol);
-        } catch (TTransportException e) {
-            e.printStackTrace();
-        } catch (TException x) {
-            x.printStackTrace();
-        }
+        db = DatabaseSingleton.getDatabase();
     }
 
-    @Override
-    public void cleanup() throws DBException {
-        super.cleanup();
-        transport.close();
+    /**
+     * Cleanup any state for this DB.
+     * Called once per DB instance; there is one DB instance per client thread.
+     */
+    public void cleanup() throws DBException
+    {
     }
 
     @Override
     public UUID beginTx() {
-        try {
-            return new UUID(0L,client.txn_begin());
-        } catch (TException e) {
-            e.printStackTrace();
-        }
-        return null;
+        t = db.newTransaction(TYPE);
+        return new UUID(0L,t.getId());
     }
 
     @Override
     public int read(String table, String key, Set<String> fields,
                     HashMap<String, ByteIterator> result) {
         try {
-            Map<String, ByteBuffer> v = client.get(key);
+            HashMap<String, String> v = t.get(Integer.parseInt(key));
 
             if (v != null) {
                 if (fields != null) {
                     for (String field : fields) {
-                        result.put(field, new StringByteIterator(new String(v.get(field).array(), Charset.forName("UTF-8"))));
+                        result.put(field, new StringByteIterator(v.get(field)));
                     }
                 } else {
                     for (String field : v.keySet()) {
-                        result.put(field, new StringByteIterator(new String(v.get(field).array(), Charset.forName("UTF-8"))));
+                        result.put(field, new StringByteIterator(v.get(field)));
                     }
                 }
             }
 
-        } catch (NoSuchKeyException e) {
-            return OK;
-        } catch (AbortException e){
+        } catch(TransactionTimeoutException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
-        } catch (TException e) {
-            e.printStackTrace();
+        } catch (TransactionAbortException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
 
@@ -118,27 +86,25 @@ public class DatabaseClient extends DB implements TxDB {
     public int update(String table, String key, HashMap<String, ByteIterator> values) {
 //        System.out.println("updatekey: " + key + " from table: " + table);
 
-        Map<String, ByteBuffer> v = null;
+        HashMap<String,String> v = null;
         try {
-            try {
-                v = client.get(key);
-            } catch (NoSuchKeyException e) {
-            }
+            v = t.get(Integer.parseInt(key));
 
             if (v!=null) {
                 if (values != null) {
                     String value = "";
                     for (String k : values.keySet()) {
                         value = values.get(k).toString();
-                        v.put(k, ByteBuffer.wrap(value.getBytes(Charset.forName("UTF-8"))));
+                        v.put(k, value);
                     }
-                    client.put(key, v);
+                    t.put(Integer.parseInt(key), v);
                 }
             }
-        } catch (AbortException e){
+        } catch(TransactionTimeoutException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
-        } catch (TException e) {
-            e.printStackTrace();
+        } catch (TransactionAbortException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
 
@@ -149,18 +115,19 @@ public class DatabaseClient extends DB implements TxDB {
     public int insert(String table, String key, HashMap<String, ByteIterator> values) {
 
         try {
-            Map<String, ByteBuffer> v = new HashMap<String, ByteBuffer>();
+            HashMap<String, String> v = new HashMap<String, String>();
             String value = "";
             for (String k : values.keySet()) {
                 value = values.get(k).toString();
-                v.put(k, ByteBuffer.wrap(value.getBytes(Charset.forName("UTF-8"))));
+                v.put(k, value);
             }
 
-            client.put(key, v);
-        } catch (AbortException e){
+            t.put(Integer.parseInt(key), v);
+        } catch(TransactionTimeoutException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
-        } catch (TException e) {
-            e.printStackTrace();
+        } catch (TransactionAbortException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
         return OK;
@@ -175,14 +142,15 @@ public class DatabaseClient extends DB implements TxDB {
     @Override
     public int commit(UUID txid) {
         try {
-            if (client.txn_commit())
+            if (t.commit())
                 return OK;
             else
                 return ERROR;
-        } catch (AbortException e){
+        } catch(TransactionTimeoutException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
-        } catch (TException e) {
-            e.printStackTrace();
+        } catch (TransactionAbortException e){
+            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
     }

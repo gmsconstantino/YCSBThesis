@@ -198,6 +198,10 @@ public class TxWorkload extends CoreWorkload {
     	return true;
     }
     
+    public String buildKeyName(long keynum) {
+        return keynum+"";
+    }
+
 	@Override
 	public boolean doTransaction(DB db, Object threadstate) {
 		TxDB txdb = (TxDB) db;

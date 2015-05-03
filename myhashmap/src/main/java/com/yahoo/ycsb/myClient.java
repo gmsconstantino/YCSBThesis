@@ -19,7 +19,10 @@ package com.yahoo.ycsb;
 
 
 import com.yahoo.ycsb.measurements.Measurements;
+import fct.thesis.database.TransactionFactory;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import thrift.DatabaseSingleton;
+import thrift.TransactionTypeFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,10 +39,115 @@ public class myClient
     public static final String INTERACTIVE ="interactive";
     public static final String INTERACTIVE_DEFAULT ="false";
 
+    private static boolean interactive;
+
     public static void main(String[] args) {
 
         Properties props=new Properties();
 
+        readArguments(args, props);
+
+        interactive =  Boolean.parseBoolean(props.getProperty(INTERACTIVE, INTERACTIVE_DEFAULT));
+
+        if (props.getProperty("threadcount")==null) {
+            String newargs[] = new String[args.length + 2];
+            System.arraycopy(args, 0, newargs, 0, args.length);
+            newargs[newargs.length - 2] = "-p";
+            newargs[newargs.length - 1] = "threadcount=1";
+            args = newargs;
+        }
+
+        String path = props.getProperty("exportfile");
+        String finalName;
+        int index_ext = 0;
+        if (path!=null){
+            File f = new File(path);
+            // Assumindo que tem extensao
+            index_ext = f.getName().lastIndexOf(".");
+            path = f.getAbsolutePath();
+            finalName = path.substring(0,path.lastIndexOf("/"))+"/"+f.getName().substring(0,index_ext)+"_${exec}."+f.getName().substring(index_ext+1);
+            System.out.println(finalName);
+            props.setProperty("exportfile",finalName);
+        }
+
+        System.out.println("Database Transactions Type : "+ props.getProperty("transaction.type","TWOPL"));
+        TransactionFactory.type type = TransactionTypeFactory.getType(props.getProperty("transaction.type", "TWOPL"));
+        DatabaseSingleton.setTransactionype(type);
+
+        System.out.println("Loading...\n");
+
+        if (path!=null){
+            HashMap<String,String> h = new HashMap<String, String>();
+            h.put("exec","load");
+            StrSubstitutor sub = new StrSubstitutor(h);
+            String fpath = sub.replace(props.getProperty("exportfile"));
+
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].startsWith("exportfile"))
+                    args[i] = "exportfile="+fpath;
+            }
+
+        }
+
+        Client.exit = false;
+
+        // Loading
+        Client.main(args);
+
+//        System.out.println("Press ENTER to continue!!");
+//        Scanner in = new Scanner(System.in);
+//        in.nextLine();
+
+        System.out.println("Running...\n");
+
+        HashMap<String, String> h = new HashMap<String, String>();
+        h.put("exec", "run");
+        StrSubstitutor sub = new StrSubstitutor(h);
+        String fpath = sub.replace(props.getProperty("exportfile"));
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-load"))
+                args[i] = "-t";
+            else if (args[i].startsWith("exportfile"))
+                args[i] = "exportfile="+fpath;
+        }
+
+        Measurements.getMeasurements().cleanMeasurements();
+
+        // Running
+        Client.main(args);
+
+
+        if (interactive){
+            System.out.println();
+
+            ArrayList<String> oldArgs = new ArrayList<String>(Arrays.asList(args));
+            ArrayList<String> tempArgs = new ArrayList<String>();
+
+            for (int i = 0; i < oldArgs.size(); i++) {
+                if (oldArgs.get(i).compareTo("-P") == 0){
+                    tempArgs.add(oldArgs.get(i));
+                    tempArgs.add(oldArgs.get(i + 1));
+                } else if (oldArgs.get(i).compareTo("-db") == 0){
+                    tempArgs.add(oldArgs.get(i));
+                    tempArgs.add(oldArgs.get(i + 1));
+                }  else if (oldArgs.get(i).compareTo("-p") == 0){
+                    tempArgs.add(oldArgs.get(i));
+                    tempArgs.add(oldArgs.get(i + 1));
+                } else if (oldArgs.get(i).compareTo("-table") == 0){
+                    tempArgs.add(oldArgs.get(i));
+                    tempArgs.add(oldArgs.get(i + 1));
+                }
+            }
+
+            String[] newArgs = new String[tempArgs.size()];
+            tempArgs.toArray(newArgs);
+            CommandLine.main(newArgs);
+        }
+
+    }
+
+    private static void readArguments(String args[], Properties props) {
         //parse arguments
         int argindex=0;
 
@@ -86,115 +194,5 @@ public class myClient
                 argindex++;
             }
         }
-
-        String path = props.getProperty("exportfile");
-        String finalName;
-        int index_ext = 0;
-        if (path!=null){
-            File f = new File(path);
-            // Assumindo que tem extensao
-            index_ext = f.getName().lastIndexOf(".");
-            finalName = path.substring(0,path.lastIndexOf("/"))+"/"+f.getName().substring(0,index_ext)+"_${exec}."+f.getName().substring(index_ext+1);
-            System.out.println(finalName);
-            props.setProperty("exportfile",finalName);
-        }
-
-        System.out.println("Database Transactions Type : "+ props.getProperty("transaction.type","TWOPL"));
-//        TransactionFactory.type type = TransactionTypeFactory.getType(props.getProperty("transaction.type","TWOPL"));
-//        dbSingleton.setTransactionype(type);
-
-        boolean interactive =  Boolean.parseBoolean(props.getProperty(INTERACTIVE, INTERACTIVE_DEFAULT));
-
-        System.out.println("Loading...\n");
-
-        if (path!=null){
-            String newargs[] = new String[args.length+2];
-            System.arraycopy(args,0,newargs,0,args.length);
-
-
-            HashMap<String,String> h = new HashMap<String, String>();
-            h.put("exec","load");
-            StrSubstitutor sub = new StrSubstitutor(h);
-            String fpath = sub.replace(props.getProperty("exportfile"));
-            newargs[newargs.length-2] = "-p";
-            newargs[newargs.length-1] = "exportfile="+fpath;
-
-            args = newargs;
-        }
-
-        Client.exit = false;
-
-        // Loading
-        Client.main(args);
-
-//        System.out.println("Press ENTER to continue!!");
-//        Scanner in = new Scanner(System.in);
-//        in.nextLine();
-
-//        int[] test_thread = new int[]{1,2,4,8,16,32,64};
-        int[] test_thread = new int[]{8};
-
-        for (int Th : test_thread) {
-            System.out.println("\nTest with threads " + Th);
-            System.out.println("Running...\n");
-
-
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("-load"))
-                    args[i] = "-t";
-                else if (args[i].startsWith("threadcount"))
-                    args[i] = "threadcount="+Th;
-            }
-
-            if (path != null) {
-                String newargs[] = new String[args.length + 2];
-                System.arraycopy(args, 0, newargs, 0, args.length);
-
-
-                HashMap<String, String> h = new HashMap<String, String>();
-                h.put("exec", "run");
-                StrSubstitutor sub = new StrSubstitutor(h);
-                String fpath = sub.replace(props.getProperty("exportfile"));
-                newargs[newargs.length - 2] = "-p";
-                newargs[newargs.length - 1] = "exportfile=" + fpath;
-
-                args = newargs;
-            }
-
-
-            Measurements.getMeasurements().cleanMeasurements();
-
-            // Running
-            Client.main(args);
-
-        }
-
-        if (interactive){
-            System.out.println();
-
-            ArrayList<String> oldArgs = new ArrayList<String>(Arrays.asList(args));
-            ArrayList<String> tempArgs = new ArrayList<String>();
-
-            for (int i = 0; i < oldArgs.size(); i++) {
-                if (oldArgs.get(i).compareTo("-P") == 0){
-                    tempArgs.add(oldArgs.get(i));
-                    tempArgs.add(oldArgs.get(i + 1));
-                } else if (oldArgs.get(i).compareTo("-db") == 0){
-                    tempArgs.add(oldArgs.get(i));
-                    tempArgs.add(oldArgs.get(i + 1));
-                }  else if (oldArgs.get(i).compareTo("-p") == 0){
-                    tempArgs.add(oldArgs.get(i));
-                    tempArgs.add(oldArgs.get(i + 1));
-                } else if (oldArgs.get(i).compareTo("-table") == 0){
-                    tempArgs.add(oldArgs.get(i));
-                    tempArgs.add(oldArgs.get(i + 1));
-                }
-            }
-
-            String[] newArgs = new String[tempArgs.size()];
-            tempArgs.toArray(newArgs);
-            CommandLine.main(newArgs);
-        }
-
     }
 }
