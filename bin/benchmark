@@ -4,35 +4,43 @@ import os
 import sys
 import subprocess
 
+def usage():
+    print "Usage: %s pathToResults" % sys.argv[0]
+    sys.exit(1)
+
 workloadL = [
-	#"txworkloada",
-	#"txworkloadb",
-	#"txworkloadc",
+	"txworkloada",
+	"txworkloadb",
+	# "txworkloadc",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
 ]
 
 typeTr = [
-	#"TWOPL",
-	"OCC",
-	#"OCCMV",
-	#"SI",
-	#"BLOTTER",
-	#"OCCNA",
-	#"OCCLL"
+    # "TWOPL",
+    # "OCC",
+    # "OCCNA",
+    "OCCLL",
+    "OCCRDIAS",
+    # "OCCMV",
+    # "SI",
+    # "BLOTTER"
 ]
 
 # Space of key
-recordcount = [
-        1000,
-        #1000000
-        ]
+recordcount = [1000]#,1000000]
 
 # Number of operaction
 operationcount = [10000000]
 
-threads = [1]#,2,4,6,8,16,32,64]
+threads = [4]#[1,2,4,8,16,32,64]
+
+if len(sys.argv) < 2:
+    usage()
+
+pathresult = sys.argv[1]
+print pathresult
 
 # ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/txworkloada", "-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", "-p", "timeseries.granularity=20", "-p", "transaction.type=SI", "-p", "exportfile=/local/cj.gomes/results.csv", "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", "-p", "recordcount=1000", "-p", "operationcount=10000000", "-p", "requestdistribution=uniform", "-p", "threadcount=32", "-p", "maxexecutiontime=40", "-s"]
 # ./bin/ycsb load_run myhashmap -P workloads/txworkloada -p myhashmap.verbose=false -p measurementtype=timeseries -p timeseries.granularity=20 -p transaction.type=SI -p exportfile=/local/cj.gomes/results.csv -p exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter -p recordcount=1000 -p operationcount=10000000 -p requestdistribution=uniform -p threadcount=32 -p maxexecutiontime=40 -s
@@ -46,9 +54,9 @@ for workload in workloadL:
 			for typeT in typeTr:
 				for thread in threads:
 					ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/"+str(workload), \
-								"-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", \
+								"-p", "measurementtype=timeseries", \
 								"-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
-								"-p", "exportfile=results.csv", \
+								"-p", "exportfile="+pathresult+"results.csv", \
 								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
 								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
 								"-p", "requestdistribution=uniform", \
