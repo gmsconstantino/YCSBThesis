@@ -10,7 +10,7 @@ def usage():
 
 workloadL = [
 	"txworkloada",
-	"txworkloadb",
+	# "txworkloadb",
 	# "txworkloadc",
 	# "workloadd",
 	# "workloade",
@@ -18,9 +18,9 @@ workloadL = [
 ]
 
 typeTr = [
-    "TWOPL",
-    "OCC",
-    "OCCNA",
+    # "TWOPL",
+    # "OCC",
+    # "OCCNA",
     "OCCLL",
     "OCCRDIAS",
     # "OCCMV",
@@ -29,12 +29,12 @@ typeTr = [
 ]
 
 # Space of key
-recordcount = [1000,1000000]
+recordcount = [1000]#,1000000]
 
 # Number of operaction
 operationcount = [10000000]
 
-threads = [1,2,4,8,16,32,64]
+threads = [4]#[1,2,4,8,16,32,64]
 
 if len(sys.argv) < 2:
     usage()
