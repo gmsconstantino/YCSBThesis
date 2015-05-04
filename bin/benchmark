@@ -59,7 +59,6 @@ for workload in workloadL:
 								"-p", "exportfile="+pathresult+"results.csv", \
 								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
 								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
-								"-p", "requestdistribution=uniform", \
 								"-p", "threadcount="+str(thread), \
 								"-p", "maxexecutiontime=60", "-s"]
 					# print ycsb_command
