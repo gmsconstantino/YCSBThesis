@@ -60,7 +60,11 @@ for workload in workloadL:
 								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
 								"-p", "requestdistribution=uniform", \
 								"-p", "threadcount="+str(thread), \
-								"-p", "maxexecutiontime=60", \
-                                "-p", "fieldsize=10", "-s"]
+								"-p", "maxexecutiontime=60", "-s"]
 					# print ycsb_command
 					subprocess.call(ycsb_command)
+
+
+# keys = ["workload", "recordcount", "operationcount", "threads", "run", "distribution", \
+                        # "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads", \
+                        # "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates"];
