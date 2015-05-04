@@ -53,7 +53,7 @@ for workload in workloadL:
 			for typeT in typeTr:
 				for thread in threads:
 					ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/"+str(workload), \
-								"-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", \
+								"-p", "measurementtype=timeseries", \
 								"-p", "timeseries.granularity=20", "-p", "transaction.type="+str(typeT), \
 								"-p", "exportfile="+pathresult+"results.csv", \
 								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \

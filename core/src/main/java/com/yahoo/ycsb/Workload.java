@@ -18,6 +18,7 @@
 package com.yahoo.ycsb;
 
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -39,6 +40,8 @@ public abstract class Workload
 	public static final String INSERT_START_PROPERTY="insertstart";
 	
 	public static final String INSERT_START_PROPERTY_DEFAULT="0";
+
+    private static ConcurrentLinkedDeque<WorkloadCleanup> cleanupHooks = new ConcurrentLinkedDeque<WorkloadCleanup>();
 	
 	private volatile AtomicBoolean stopRequested = new AtomicBoolean(false);
 	
@@ -72,6 +75,9 @@ public abstract class Workload
        */
       public void cleanup() throws WorkloadException
       {
+          for (WorkloadCleanup wc : cleanupHooks){
+              wc.run();
+          }
       }
       
       /**
@@ -107,7 +113,11 @@ public abstract class Workload
       public void requestStop() {
         stopRequested.set(true);
       }
-      
+
+      public static void addCleanupHook(WorkloadCleanup wc){
+          cleanupHooks.add(wc);
+      }
+
       /**
        * Check the status of the stop request flag.
        * @return true if stop was requested, false otherwise.

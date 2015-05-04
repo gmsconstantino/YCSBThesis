@@ -114,6 +114,13 @@ public class myClient
 
         Measurements.getMeasurements().cleanMeasurements();
 
+        Workload.addCleanupHook(new WorkloadCleanup() {
+            @Override
+            public void run() {
+                DatabaseSingleton.getDatabase().cleanup();
+            }
+        });
+
         // Running
         Client.main(args);
 
