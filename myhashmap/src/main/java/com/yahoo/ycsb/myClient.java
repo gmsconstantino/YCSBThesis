@@ -99,6 +99,7 @@ public class myClient
             File f = new File(path);
             // Assumindo que tem extensao
             index_ext = f.getName().lastIndexOf(".");
+            path = f.getAbsolutePath();
             finalName = path.substring(0,path.lastIndexOf("/"))+"/"+f.getName().substring(0,index_ext)+"_${exec}."+f.getName().substring(index_ext+1);
             System.out.println(finalName);
             props.setProperty("exportfile",finalName);
@@ -136,19 +137,21 @@ public class myClient
 //        Scanner in = new Scanner(System.in);
 //        in.nextLine();
 
-        int[] test_thread = new int[]{1,2,4,8,16,32,64};
+        int[] test_thread = new int[]{1};
 
         for (int Th : test_thread) {
-            System.out.println("\nTest with threads " + Th);
-            System.out.println("Running...\n");
+
 
 
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-load"))
                     args[i] = "-t";
-                else if (args[i].startsWith("threadcount"))
-                    args[i] = "threadcount="+Th;
+             //   else if (args[i].startsWith("threadcount"))
+             //       args[i] = "threadcount="+Th;
             }
+            
+            System.out.println("\nTest with threads " + Th);
+            System.out.println("Running...\n");
 
             if (path != null) {
                 String newargs[] = new String[args.length + 2];
