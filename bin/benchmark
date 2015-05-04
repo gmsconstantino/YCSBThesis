@@ -11,7 +11,7 @@ def usage():
 workloadL = [
 	"txworkloada",
 	"txworkloadb",
-	"txworkloadc",
+	# "txworkloadc",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
@@ -22,9 +22,10 @@ typeTr = [
     "OCC",
     "OCCNA",
     "OCCLL",
-    "OCCMV",
-    "SI",
-    "BLOTTER"
+    "OCCRDIAS",
+    # "OCCMV",
+    # "SI",
+    # "BLOTTER"
 ]
 
 # Space of key

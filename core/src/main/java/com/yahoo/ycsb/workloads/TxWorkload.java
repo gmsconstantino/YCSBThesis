@@ -197,10 +197,6 @@ public class TxWorkload extends CoreWorkload {
     	
     	return true;
     }
-
-    public String buildKeyName(long keynum) {
-        return keynum+"";
-    }
     
     public String buildKeyName(long keynum) {
         return keynum+"";
