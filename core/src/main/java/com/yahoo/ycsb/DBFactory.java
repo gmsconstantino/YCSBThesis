@@ -46,7 +46,7 @@ public class DBFactory
 	 
 	 ret.setProperties(properties);
 
-	 return ret instanceof TxDB ? new TxDBWrapper(ret) : new DBWrapper(ret);
+	 return ret instanceof TxDB ? new TxDBWrapperRestricted(ret) : new DBWrapper(ret);
       }
       
 }

@@ -104,7 +104,7 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 	}
 	
 	@Override
-	public void measure(int latency) 
+	public synchronized void measure(int latency)
 	{
 		checkEndOfUnit(false);
 		

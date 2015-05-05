@@ -20,6 +20,7 @@ package com.yahoo.ycsb.measurements;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 
@@ -31,14 +32,16 @@ import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
  */
 public class Measurements
 {
+    private static class Loader {
+        static final Measurements INSTANCE = new Measurements(Measurements.measurementproperties);
+    }
+
 	private static final String MEASUREMENT_TYPE = "measurementtype";
 
 	private static final String MEASUREMENT_TYPE_DEFAULT = "histogram";
 
-	static Measurements singleton=null;
-	
 	static Properties measurementproperties=null;
-	
+
 	public static void setProperties(Properties props)
 	{
 		measurementproperties=props;
@@ -47,16 +50,12 @@ public class Measurements
       /**
        * Return the singleton Measurements object.
        */
-	public synchronized static Measurements getMeasurements()
+	public static Measurements getMeasurements()
 	{
-		if (singleton==null)
-		{
-			singleton=new Measurements(measurementproperties);
-		}
-		return singleton;
+		return Loader.INSTANCE;
 	}
 
-	HashMap<String,OneMeasurement> data;
+	ConcurrentHashMap<String,OneMeasurement> data;
 	boolean histogram=true;
 
 	private Properties _props;
@@ -64,10 +63,10 @@ public class Measurements
       /**
        * Create a new object with the specified properties.
        */
-	public Measurements(Properties props)
+	private Measurements(Properties props)
 	{
-		data=new HashMap<String,OneMeasurement>();
-		
+        data=new ConcurrentHashMap<String,OneMeasurement>();
+
 		_props=props;
 		
 		if (_props.getProperty(MEASUREMENT_TYPE, MEASUREMENT_TYPE_DEFAULT).compareTo("histogram")==0)
@@ -95,17 +94,11 @@ public class Measurements
       /**
        * Report a single value of a single metric. E.g. for read latency, operation="READ" and latency is the measured value.
        */
-	public synchronized void measure(String operation, int latency)
+	public void measure(String operation, int latency)
 	{
 		if (!data.containsKey(operation))
 		{
-			synchronized(this)
-			{
-				if (!data.containsKey(operation))
-				{
-					data.put(operation,constructOneMeasurement(operation));
-				}
-			}
+            data.putIfAbsent(operation, constructOneMeasurement(operation));
 		}
 		try
 		{
@@ -166,6 +159,6 @@ public class Measurements
 	}
 
     public void cleanMeasurements(){
-        data = new HashMap<String, OneMeasurement>();
+        data = new ConcurrentHashMap<String, OneMeasurement>();
     }
 }
