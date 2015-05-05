@@ -65,10 +65,8 @@ public class DatabaseClient extends DB implements TxDB {
             }
 
         } catch(TransactionTimeoutException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
 
@@ -101,10 +99,8 @@ public class DatabaseClient extends DB implements TxDB {
                 }
             }
         } catch(TransactionTimeoutException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
 
@@ -124,10 +120,8 @@ public class DatabaseClient extends DB implements TxDB {
 
             t.put(Integer.parseInt(key), v);
         } catch(TransactionTimeoutException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
         return OK;
@@ -147,10 +141,8 @@ public class DatabaseClient extends DB implements TxDB {
             else
                 return ERROR;
         } catch(TransactionTimeoutException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -2);
             return ERROR;
         } catch (TransactionAbortException e){
-            Measurements.getMeasurements().reportReturnCode("Tx", -3);
             return ERROR;
         }
     }
