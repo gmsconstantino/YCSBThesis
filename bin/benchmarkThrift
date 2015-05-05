@@ -34,7 +34,7 @@ operationcount = [10000000]
 
 distribution = 'uniform'
 
-threads = [1,2,4,6,8,16,32,64]
+threads = [1,2,4,8,16,24,32,48,64]
 
 # ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/txworkloada", "-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", "-p", "timeseries.granularity=20", "-p", "transaction.type=SI", "-p", "exportfile=/local/cj.gomes/results.csv", "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", "-p", "recordcount=1000", "-p", "operationcount=10000000", "-p", "requestdistribution=uniform", "-p", "threadcount=32", "-p", "maxexecutiontime=40", "-s"]
 # ./bin/ycsb load_run myhashmap -P workloads/txworkloada -p myhashmap.verbose=false -p measurementtype=timeseries -p timeseries.granularity=20 -p transaction.type=SI -p exportfile=/local/cj.gomes/results.csv -p exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter -p recordcount=1000 -p operationcount=10000000 -p requestdistribution=uniform -p threadcount=32 -p maxexecutiontime=40 -s
