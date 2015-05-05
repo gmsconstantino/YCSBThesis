@@ -724,7 +724,8 @@ public class Client
 
 		Vector<Thread> threads=new Vector<Thread>();
 
-		for (int threadid=0; threadid<threadcount; threadid++)
+        int threadid=0;
+		for (; threadid<threadcount; threadid++)
 		{
 			DB db=null;
 			try
@@ -742,6 +743,26 @@ public class Client
 			threads.add(t);
 			//t.start();
 		}
+
+        if(!dotransactions){
+            DB db=null;
+            try
+            {
+                db=DBFactory.newDB(dbname,props);
+            }
+            catch (UnknownDBException e)
+            {
+                System.out.println("Unknown DB "+dbname);
+                exit(0);
+            }
+
+            int ops = opcount/threadcount;
+            ops = opcount - ops*threadcount;
+            if(ops!=0) {
+                Thread t = new ClientThread(db, dotransactions, workload, threadid, threadcount, props, ops, targetperthreadperms);
+                threads.add(t);
+            }
+        }
 
 		StatusThread statusthread=null;
 
