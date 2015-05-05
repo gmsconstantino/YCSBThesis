@@ -189,11 +189,19 @@ public class TxWorkload extends CoreWorkload {
     public boolean doInsert(DB db, Object threadstate) {
     	TxDB txdb = (TxDB) db;
 		int keynum=keysequence.nextInt();
-		
-		UUID txid = txdb.beginTx();
+
+        long st = System.nanoTime();
+        UUID txid = txdb.beginTx();
 		txdb.insert(table, buildKeyName(keynum), txBuildValues());
-		if(txdb.commit(txid) != 0)
-			return false;
+
+        if(txdb.commit(txid) == 0) {
+            long en = System.nanoTime();
+            Measurements.getMeasurements().measure("Tx", (int)((en-st)/1000));
+            Measurements.getMeasurements().reportReturnCode("Tx", 0);
+        } else {
+            Measurements.getMeasurements().reportReturnCode("Tx", -1);
+            return false;
+        }
     	
     	return true;
     }
