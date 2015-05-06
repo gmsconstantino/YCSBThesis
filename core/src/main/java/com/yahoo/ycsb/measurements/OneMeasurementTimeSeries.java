@@ -22,9 +22,6 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.yahoo.ycsb.measurements.exporter.MeasurementsExporter;
 
@@ -61,11 +58,8 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 	long currentunit=-1;
 	int count=0;
 	int sum=0;
-//	int operations=0;
-//	long totallatency=0;
-	AtomicInteger operations;
-    AtomicLong totallatency;
-
+	int operations=0;
+	long totallatency=0;
 
 	//keep a windowed version of these stats for printing status
 	int windowoperations=0;
@@ -82,9 +76,6 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 		_granularity=Integer.parseInt(props.getProperty(GRANULARITY,GRANULARITY_DEFAULT));
 		_measurements=new Vector<SeriesUnit>();
 		returncodes=new HashMap<Integer,int[]>();
-
-        operations = new AtomicInteger(0);
-        totallatency = new AtomicLong(0L);
 	}
 	
 	void checkEndOfUnit(boolean forceend)
@@ -112,16 +103,14 @@ public class OneMeasurementTimeSeries extends OneMeasurement
 	}
 	
 	@Override
-	public void measure(int latency)
+	public synchronized void measure(int latency)
 	{
 		checkEndOfUnit(false);
 		
 		count++;
 		sum+=latency;
-//		totallatency+=latency;
-//		operations++;
-        operations.incrementAndGet();
-        totallatency.addAndGet(latency);
+		totallatency+=latency;
+		operations++;
 		windowoperations++;
 		windowtotallatency+=latency;
 		
@@ -142,8 +131,8 @@ public class OneMeasurementTimeSeries extends OneMeasurement
   {
     checkEndOfUnit(true);
 
-    exporter.write(getName(), "Operations", operations.get());
-    exporter.write(getName(), "AverageLatency(us)", (((double)totallatency.get())/((double)operations.get())));
+    exporter.write(getName(), "Operations", operations);
+    exporter.write(getName(), "AverageLatency(us)", (((double)totallatency)/((double)operations)));
     exporter.write(getName(), "MinLatency(us)", min);
     exporter.write(getName(), "MaxLatency(us)", max);
 
