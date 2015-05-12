@@ -14,13 +14,13 @@
 # LICENSE file.                                                                                                                                                                   
 
 # Yahoo! Cloud System Benchmark
-# Workload B: Read mostly workload
-#   Application example: photo tagging; add a tag is an update, but most operations are to read tags
-#
-#   Read/update ratio: 95/5
+# Workload C: Read only
+#   Application example: user profile cache, where profiles are constructed elsewhere (e.g., Hadoop)
+#                        
+#   Read/update ratio: 100/0
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
 #   Request distribution: zipfian
-nameworkload=txworkloadb
+nameworkload=txworkloadd
 
 recordcount=1000
 operationcount=1000
@@ -30,7 +30,7 @@ workload=com.yahoo.ycsb.workloads.TxWorkload
 txminsize=5
 txmaxsize=10
 
-txread=0.7
+txread=0.5
 txnonblindwrite=0.5
 #percentagem de escritas e o que falta retirando as duas percentagens de cima
 

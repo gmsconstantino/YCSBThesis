@@ -30,8 +30,8 @@ workload=com.yahoo.ycsb.workloads.TxWorkload
 txminsize=5
 txmaxsize=10
 
-txread=1
-txnonblindwrite=0
+txread=0.6
+txnonblindwrite=0.5
 #percentagem de escritas e o que falta retirando as duas percentagens de cima
 
 requestdistribution=uniform

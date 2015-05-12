@@ -11,7 +11,8 @@ def usage():
 workloadL = [
 	"txworkloada",
 	"txworkloadb",
-	"txworkloadc",
+    "txworkloadc",
+    "txworkloadd",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
@@ -19,10 +20,10 @@ workloadL = [
 
 typeTr = [
     "TWOPL",
-    "OCC",
+    # "OCC",
     "OCCNA",
     "OCCLL",
-    "OCCRDIAS",
+    # "OCCRDIAS",
     "OCCMV",
     "SI",
     "BLOTTER"
