@@ -21,7 +21,7 @@ workloadL = [
 typeTr = [
     "TWOPL",
     # "OCC",
-    "OCCNA",
+    # "OCCNA",
     "OCCLL",
     # "OCCRDIAS",
     "OCCMV",
