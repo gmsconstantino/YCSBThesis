@@ -10,9 +10,9 @@ def usage():
 
 workloadL = [
 	"txworkloada",
-	"txworkloadb",
-    "txworkloadc",
-    "txworkloadd",
+	# "txworkloadb",
+    # "txworkloadc",
+    # "txworkloadd",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
@@ -26,7 +26,7 @@ typeTr = [
     # "OCCRDIAS",
     "OCCMV",
     "SI",
-    "BLOTTER"
+    "NMSI"
 ]
 
 # Space of key
@@ -61,7 +61,8 @@ for workload in workloadL:
 								"-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
 								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
 								"-p", "threadcount="+str(thread), \
-								"-p", "maxexecutiontime=60", "-s"]
+								"-p", "maxexecutiontime=60", \
+                                "-p", "fieldsize=10", "-s"]
 					# print ycsb_command
 					subprocess.call(ycsb_command)
 
