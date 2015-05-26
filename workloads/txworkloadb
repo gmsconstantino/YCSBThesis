@@ -26,15 +26,15 @@ recordcount=1000
 operationcount=1000
 workload=com.yahoo.ycsb.workloads.TxWorkload
 
+txminsize=10
+txmaxsize=50
 
-txminsize=5
-txmaxsize=10
-
-txread=0.7
+txread=0.8
 txnonblindwrite=0.5
 #percentagem de escritas e o que falta retirando as duas percentagens de cima
 
-requestdistribution=uniform
+fieldsize=100
 
+requestdistribution=uniform
 
 
