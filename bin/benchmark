@@ -12,7 +12,8 @@ workloadL = [
 	"txworkloada",
 	"txworkloadb",
 	"txworkloadc",
-	"txworkloadd",
+    "txworkloadd",
+    "txworkloade",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
