@@ -17,6 +17,7 @@
 
 package com.yahoo.ycsb.generator;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import com.yahoo.ycsb.Utils;
@@ -312,8 +313,14 @@ public class ZipfianGenerator extends IntegerGenerator
 	
 	public static void main(String[] args)
 	{
-		new ZipfianGenerator(ScrambledZipfianGenerator.ITEM_COUNT);
-	}
+        ZipfianGenerator zg = new ZipfianGenerator(5,10);
+        int[] count = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            count[zg.nextInt()]++;
+            System.out.println(zg.nextInt());
+        }
+        System.out.println(Arrays.toString(count));
+    }
 
 	/**
 	 * @todo Implement ZipfianGenerator.mean()

@@ -8,6 +8,9 @@ def usage():
     print "Usage: %s pathToResults" % sys.argv[0]
     sys.exit(1)
 
+distribution = "zipfian"
+# distribution = "uniform"
+
 workloadL = [
 	"txworkloada",
 	"txworkloadb",
@@ -63,6 +66,7 @@ for workload in workloadL:
 								"-p", "recordcount="+str(nk), "-p", "operationcount="+str(no), \
 								"-p", "threadcount="+str(thread), \
 								"-p", "maxexecutiontime=60", \
+                                "-p", "requestdistribution="+distribution, \
 								#"-p", "fieldsize=10", "-s"]
 								"-s"]
 					# print ycsb_command
