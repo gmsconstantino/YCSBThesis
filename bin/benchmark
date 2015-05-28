@@ -8,15 +8,16 @@ def usage():
     print "Usage: %s pathToResults" % sys.argv[0]
     sys.exit(1)
 
-distribution = "zipfian"
-# distribution = "uniform"
+# distribution = "zipfian"
+distribution = "uniform"
 
 workloadL = [
 	"txworkloada",
-	"txworkloadb",
-	"txworkloadc",
-    "txworkloadd",
-    "txworkloade",
+	# "txworkloadb",
+	# "txworkloadc",
+    # "txworkloadd",
+    # "txworkloade",
+    "txworkloadf",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
