@@ -20,9 +20,9 @@ package com.yahoo.ycsb;
 
 import com.yahoo.ycsb.measurements.Measurements;
 import fct.thesis.database.TransactionFactory;
+import fct.thesis.database.TransactionTypeFactory;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import thrift.DatabaseSingleton;
-import thrift.TransactionTypeFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
