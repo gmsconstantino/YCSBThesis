@@ -27,11 +27,11 @@ operationcount=10000
 workload=com.yahoo.ycsb.workloads.TxWorkload
 
 
-txminsize=5
-txmaxsize=10
+txminsize=10
+txmaxsize=15
 
-txread=0.8
-txnonblindwrite=0
+txread=0.5
+txnonblindwrite=0.5
 #percentagem de escritas e o que falta retirando as duas percentagens de cima
 
 fieldsize=100
