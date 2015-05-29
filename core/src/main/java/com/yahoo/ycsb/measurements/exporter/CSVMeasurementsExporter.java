@@ -31,7 +31,7 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
 {
     String keys[] = {"workloads", "recordcount", "operationcount", "threads", "distribution",
             "transactiontype", "run", "runtime", "tx_throughput","n_tx","avg_tx","min_tx","max_tx","Return=0",
-            "Return=-1","Return=-2","Return=-3",
+            "Return=-1","Return=-2","Return=-3","abortRate",
             "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
             "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates",
             "n_begins","avg_begins", "min_begins", "max_begins",
@@ -56,6 +56,9 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
             data.put("run", "1");
         else
             data.put("run", "0");
+
+        data.put("Return=0","0");
+        data.put("Return=-1","0");
     }
 
     public void write(String metric, String measurement, int i) throws IOException
@@ -149,10 +152,15 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
         }
 
         String values = "";
-        String v;
+        String v = null;
         int t = keys.length-1;
         for (String key : keys){
-            v = data.get(key);
+            if(key.equals("abortRate")){
+                double commits = Double.parseDouble(data.get("Return=0"));
+                double aborts = Double.parseDouble(data.get("Return=-1"));
+                v = "" + Math.round((aborts / (double) (commits + aborts)) * 100);
+            } else
+                v = data.get(key);
             v = (v==null)?" ":v;
             values += v + (t>0?",":"\n");
             t--;

@@ -102,6 +102,8 @@ public class DatabaseClient extends DB implements TxDB {
             return ERROR;
         } catch (TransactionAbortException e){
             return ERROR;
+        } catch (NullPointerException e){ //TODO: null devido ao GC nmsi mal feito
+            return ERROR;
         }
 
         return OK;

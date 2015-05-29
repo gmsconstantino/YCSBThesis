@@ -313,11 +313,15 @@ public class ZipfianGenerator extends IntegerGenerator
 	
 	public static void main(String[] args)
 	{
-        ZipfianGenerator zg = new ZipfianGenerator(5,10);
-        int[] count = new int[1000];
-        for (int i = 0; i < 1000; i++) {
-            count[zg.nextInt()]++;
-            System.out.println(zg.nextInt());
+        int keynum;
+        ZipfianGenerator zg = new ZipfianGenerator(1000);
+        int[] count = new int[1001];
+        for (int i = 0; i < 1000000; i++) {
+
+            keynum=zg.nextInt();
+
+            count[keynum]++;
+//            System.out.println(zg.nextInt());
         }
         System.out.println(Arrays.toString(count));
     }

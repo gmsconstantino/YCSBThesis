@@ -5,13 +5,7 @@
 
 package com.yahoo.ycsb.workloads;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 
 import com.yahoo.ycsb.TxDB;
 
@@ -116,17 +110,7 @@ public class TxWorkload extends CoreWorkload {
 		}
 		else if (requestdistrib.compareTo("zipfian")==0)
 		{
-			//it does this by generating a random "next key" in part by taking the modulus over the number of keys
-			//if the number of keys changes, this would shift the modulus, and we don't want that to change which keys are popular
-			//so we'll actually construct the scrambled zipfian generator with a keyspace that is larger than exists at the beginning
-			//of the test. that is, we'll predict the number of inserts, and tell the scrambled zipfian generator the number of existing keys
-			//plus the number of predicted keys as the total keyspace. then, if the generator picks a key that hasn't been inserted yet, will
-			//just ignore it and pick another key. this way, the size of the keyspace doesn't change from the perspective of the scrambled zipfian generator
-			
-			int opcount=Integer.parseInt(p.getProperty(Client.OPERATION_COUNT_PROPERTY));
-			int expectednewkeys=(int)(((double)opcount)*insertproportion*2.0); //2 is fudge factor
-			
-			keychooser=new ScrambledZipfianGenerator(recordcount+expectednewkeys);
+			keychooser=new ZipfianGenerator(recordcount);
 		}
 		else if (requestdistrib.compareTo("latest")==0)
 		{
@@ -160,11 +144,7 @@ public class TxWorkload extends CoreWorkload {
                 }
             while(keynum < 0);
         } else {
-            do
-                {
-                    keynum=keychooser.nextInt();
-                }
-            while (keynum > transactioninsertkeysequence.lastInt());
+            keynum=keychooser.nextInt();
         }
         return keynum;
     }
@@ -216,27 +196,30 @@ public class TxWorkload extends CoreWorkload {
 		int txSize = transactionSize.nextInt();
 		int numberOfReads = (int) Math.round(txSize * txread);
 		int numberOfWrites = txSize - numberOfReads;
+        int numberOfNonBlind = 0;
 		Vector<Integer> keysRead = new Vector<Integer>();
 		Vector<Integer> keysWrite = new Vector<Integer>();
 		int k;
-		for(int i = 0; i < numberOfReads; i++) {
-			k = txNextKeynum();
-			while(keysRead.contains(k)) k = txNextKeynum();
-			keysRead.add(k);
-		}
-		int i = 0;
-		if(txnonblindwrite > 0) {
-			int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
-			@SuppressWarnings("unchecked")
-			Vector<Integer>keysReadClone = (Vector<Integer>) keysRead.clone();
-			for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++)
-				keysWrite.add(keysReadClone.remove(rand.nextInt(keysReadClone.size())));
-		}
-		for(; i< numberOfWrites; i++) {
-			k = txNextKeynum();
-			while(keysWrite.contains(k) && keysRead.contains(k)) k = txNextKeynum();
-			keysWrite.add(k);
-		}
+
+        int i = 0;
+        if(txnonblindwrite > 0) {
+            numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
+            for(; i < numberOfNonBlind; i++) {
+                k = txNextKeynum();
+                while(keysWrite.contains(k)) k = txNextKeynum();
+                keysWrite.add(k);
+            }
+        }
+        for(int j = 0; j < numberOfReads; j++) {
+            k = txNextKeynum();
+            while(keysRead.contains(k)) k = txNextKeynum();
+            keysRead.add(k);
+        }
+        for(; i< numberOfWrites; i++) {
+            k = txNextKeynum();
+            while(keysWrite.contains(k) && keysRead.contains(k)) k = txNextKeynum();
+            keysWrite.add(k);
+        }
 		
 		Set<String> fields = new HashSet<String>(1);
 		fields.add(field);
@@ -265,4 +248,64 @@ public class TxWorkload extends CoreWorkload {
 		}
 		return true;
 	}
+
+    public static void main(String[] args) {
+        ZipfianGenerator keychooser = new ZipfianGenerator(10000);
+        int txSize = 5;
+        double txread = 0.8;
+        double txnonblindwrite = 0.5;
+
+        int numberOfReads = (int) Math.round(txSize * txread);
+        int numberOfWrites = txSize - numberOfReads;
+        int numberOfNonBlind = 0;
+        Vector<Integer> keysRead = new Vector<Integer>();
+        Vector<Integer> keysWrite = new Vector<Integer>();
+        int k;
+
+        Random rand = new Random();
+
+        System.out.println("Start");
+
+        int[] count = new int[10001];
+        for (int j = 0; j < 1000000; j++) {
+            keysRead.clear();
+            keysWrite.clear();
+
+            for(int i = 0; i < numberOfReads; i++) {
+                k = keychooser.nextInt();
+                while(keysRead.contains(k)) k = keychooser.nextInt();
+                keysRead.add(k);
+            }
+            int i = 0;
+            if(txnonblindwrite > 0) {
+                numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
+                @SuppressWarnings("unchecked")
+                Vector<Integer>keysReadClone = (Vector<Integer>) keysRead.clone();
+                for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++)
+                    keysWrite.add(keysReadClone.remove(rand.nextInt(keysReadClone.size())));
+            }
+            for(; i< numberOfWrites; i++) {
+                k = keychooser.nextInt();
+                while(keysWrite.contains(k) && keysRead.contains(k)) k = keychooser.nextInt();
+                keysWrite.add(k);
+            }
+
+//        System.out.println("read: "+keysRead);
+//        System.out.println("write:"+keysWrite);
+
+//            for (Integer r : keysRead){
+//                count[r]++;
+//            }
+            for (Integer w : keysWrite){
+                count[w]++;
+            }
+
+            if (j%10==0)
+                System.out.print(".");
+
+        }
+        System.out.println();
+        System.out.println(Arrays.toString(count));
+
+    }
 }
