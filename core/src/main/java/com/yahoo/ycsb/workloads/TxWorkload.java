@@ -196,29 +196,29 @@ public class TxWorkload extends CoreWorkload {
 		int txSize = transactionSize.nextInt();
 		int numberOfReads = (int) Math.round(txSize * txread);
 		int numberOfWrites = txSize - numberOfReads;
-        int numberOfNonBlind = 0;
 		Vector<Integer> keysRead = new Vector<Integer>();
 		Vector<Integer> keysWrite = new Vector<Integer>();
 		int k;
 
         int i = 0;
-        if(txnonblindwrite > 0) {
-            numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
-            for(; i < numberOfNonBlind; i++) {
-                k = txNextKeynum();
-                while(keysWrite.contains(k)) k = txNextKeynum();
-                keysWrite.add(k);
-            }
-        }
-        for(int j = 0; j < numberOfReads; j++) {
-            k = txNextKeynum();
-            while(keysRead.contains(k)) k = txNextKeynum();
-            keysRead.add(k);
-        }
         for(; i< numberOfWrites; i++) {
             k = txNextKeynum();
-            while(keysWrite.contains(k) && keysRead.contains(k)) k = txNextKeynum();
+            while(keysWrite.contains(k)) k = txNextKeynum();
             keysWrite.add(k);
+        }
+
+        for(int j = 0; j < numberOfReads; j++) {
+            k = txNextKeynum();
+            while(keysRead.contains(k) && keysWrite.contains(k)) k = txNextKeynum();
+            keysRead.add(k);
+        }
+
+        if(txnonblindwrite > 0) {
+            int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
+            @SuppressWarnings("unchecked")
+            Vector<Integer>keysReadClone = (Vector<Integer>) keysRead.clone();
+            for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++)
+                keysWrite.add(keysReadClone.remove(rand.nextInt(keysReadClone.size())));
         }
 		
 		Set<String> fields = new HashSet<String>(1);
