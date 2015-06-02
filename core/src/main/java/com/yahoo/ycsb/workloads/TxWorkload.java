@@ -108,7 +108,7 @@ public class TxWorkload extends CoreWorkload {
 		{
 			keychooser=new UniformIntegerGenerator(0,recordcount-1);
 		}
-        else if (requestdistrib.compareTo("scrambledzipfian")==0)
+        else if (requestdistrib.compareTo("zipfian")==0)
         {
             //it does this by generating a random "next key" in part by taking the modulus over the number of keys
             //if the number of keys changes, this would shift the modulus, and we don't want that to change which keys are popular
