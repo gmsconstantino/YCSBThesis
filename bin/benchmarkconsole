@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import subprocess
+
+def usage():
+    print "Usage: %s pathToResults distribuiton workload type recordcount opcount threads" % sys.argv[0]
+    sys.exit(1)
+
+if len(sys.argv) < 2:
+    usage()
+
+pathresult = sys.argv[1]
+print pathresult
+
+distribution = sys.argv[2]
+# distribution = "uniform"
+
+workload = sys.argv[3]
+print workload
+
+type = sys.argv[4]
+
+# Space of key
+recordcount = sys.argv[5]
+
+# Number of operaction
+operationcount = sys.argv[6]
+
+thread = sys.argv[7]
+
+
+
+# ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/txworkloada", "-p", "myhashmap.verbose=false", "-p", "measurementtype=timeseries", "-p", "timeseries.granularity=20", "-p", "transaction.type=SI", "-p", "exportfile=/local/cj.gomes/results.csv", "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", "-p", "recordcount=1000", "-p", "operationcount=10000000", "-p", "requestdistribution=uniform", "-p", "threadcount=32", "-p", "maxexecutiontime=40", "-s"]
+# ./bin/ycsb load_run myhashmap -P workloads/txworkloada -p myhashmap.verbose=false -p measurementtype=timeseries -p timeseries.granularity=20 -p transaction.type=SI -p exportfile=/local/cj.gomes/results.csv -p exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter -p recordcount=1000 -p operationcount=10000000 -p requestdistribution=uniform -p threadcount=32 -p maxexecutiontime=40 -s
+
+ycsb_command = ["./bin/ycsb", "load_run", "myhashmap", "-P", "workloads/"+workload, \
+            "-p", "measurementtype=timeseries", \
+            "-p", "timeseries.granularity=20", "-p", "transaction.type="+type, \
+            "-p", "exportfile="+pathresult+"results.csv", \
+            "-p", "exporter=com.yahoo.ycsb.measurements.exporter.CSVMeasurementsExporter", \
+            "-p", "recordcount="+recordcount, "-p", "operationcount="+operationcount, \
+            "-p", "threadcount="+thread, \
+            "-p", "maxexecutiontime=60", \
+            "-p", "requestdistribution="+distribution, \
+            #"-p", "fieldsize=10", "-s"]
+            "-s"]
+# print ycsb_command
+subprocess.call(ycsb_command)
+
+
+# keys = ["workload", "recordcount", "operationcount", "threads", "run", "distribution", \
+                        # "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads", \
+                        # "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates"];
