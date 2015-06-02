@@ -108,6 +108,20 @@ public class TxWorkload extends CoreWorkload {
 		{
 			keychooser=new UniformIntegerGenerator(0,recordcount-1);
 		}
+        else if (requestdistrib.compareTo("scrambledzipfian")==0)
+        {
+            //it does this by generating a random "next key" in part by taking the modulus over the number of keys
+            //if the number of keys changes, this would shift the modulus, and we don't want that to change which keys are popular
+            //so we'll actually construct the scrambled zipfian generator with a keyspace that is larger than exists at the beginning
+            //of the test. that is, we'll predict the number of inserts, and tell the scrambled zipfian generator the number of existing keys
+            //plus the number of predicted keys as the total keyspace. then, if the generator picks a key that hasn't been inserted yet, will
+            //just ignore it and pick another key. this way, the size of the keyspace doesn't change from the perspective of the scrambled zipfian generator
+
+//            int opcount=Integer.parseInt(p.getProperty(Client.OPERATION_COUNT_PROPERTY));
+//            int expectednewkeys=(int)(((double)opcount)*insertproportion*2.0); //2 is fudge factor
+
+            keychooser=new ScrambledZipfianGenerator(recordcount);
+        }
 		else if (requestdistrib.compareTo("zipfian")==0)
 		{
 			keychooser=new ZipfianGenerator(recordcount);
