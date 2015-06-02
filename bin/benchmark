@@ -9,16 +9,17 @@ def usage():
     sys.exit(1)
 
 distribution = "zipfian"
+# distribution = "scrambledzipfian"
 # distribution = "uniform"
 
 workloadL = [
-	# "txworkloada",
-	# "txworkloadb",
-	# "txworkloadc",
+	"txworkloada",
+	"txworkloadb",
+	"txworkloadc",
     # "txworkloadd",
-    # "txworkloade",
+    "txworkloade",
     # "txworkloadf",
-    # "txworkloadg",
+    "txworkloadg",
     "txworkloadh",
 	# "workloadd",
 	# "workloade",
