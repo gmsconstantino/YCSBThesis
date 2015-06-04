@@ -34,6 +34,7 @@ public class TxWorkload extends CoreWorkload {
     Properties props;
 	IntegerGenerator transactionSize;
 	IntegerGenerator keychooser;
+    IntegerGenerator keyReadChooser;
 	int recordcount;
 	CounterGenerator transactioninsertkeysequence;
 	Random rand;
@@ -103,7 +104,9 @@ public class TxWorkload extends CoreWorkload {
 		transactioninsertkeysequence=new CounterGenerator(recordcount);
 		double insertproportion=Double.parseDouble(p.getProperty(INSERT_PROPORTION_PROPERTY,INSERT_PROPORTION_PROPERTY_DEFAULT));	
 		String requestdistrib = p.getProperty(REQUEST_DISTRIBUTION_PROPERTY,REQUEST_DISTRIBUTION_PROPERTY_DEFAULT);
-		
+
+        keyReadChooser=new UniformIntegerGenerator(0,recordcount-1);
+
 		if (requestdistrib.compareTo("uniform")==0)
 		{
 			keychooser=new UniformIntegerGenerator(0,recordcount-1);
@@ -160,6 +163,11 @@ public class TxWorkload extends CoreWorkload {
         } else {
             keynum=keychooser.nextInt();
         }
+        return keynum;
+    }
+
+    int txReadNextKeynum() {
+        int keynum = keyReadChooser.nextInt();
         return keynum;
     }
     
@@ -222,8 +230,8 @@ public class TxWorkload extends CoreWorkload {
         }
 
         for(int j = 0; j < numberOfReads; j++) {
-            k = txNextKeynum();
-            while(keysRead.contains(k) && keysWrite.contains(k)) k = txNextKeynum();
+            k = txReadNextKeynum();
+            while(keysRead.contains(k) && keysWrite.contains(k)) k = txReadNextKeynum();
             keysRead.add(k);
         }
 
