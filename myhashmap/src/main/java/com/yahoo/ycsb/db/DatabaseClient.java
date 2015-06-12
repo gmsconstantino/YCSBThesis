@@ -88,17 +88,15 @@ public class DatabaseClient extends DB implements TxDB {
 
         HashMap<String,String> v = null;
         try {
-            v = t.get(Integer.parseInt(key));
-
-            if (v!=null) {
-                if (values != null) {
-                    String value = "";
-                    for (String k : values.keySet()) {
-                        value = values.get(k).toString();
-                        v.put(k, value);
-                    }
-                    t.put(Integer.parseInt(key), v);
+            if (values != null) {
+                String value = "";
+                for (String k : values.keySet()) {
+                    value = values.get(k).toString();
+                    v.put(k, value);
                 }
+                t.put(Integer.parseInt(key), v);
+            } else {
+                return ERROR;
             }
         } catch(TransactionTimeoutException e){
             return ERROR;
