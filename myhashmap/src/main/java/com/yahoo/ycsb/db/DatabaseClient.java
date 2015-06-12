@@ -86,7 +86,7 @@ public class DatabaseClient extends DB implements TxDB {
     public int update(String table, String key, HashMap<String, ByteIterator> values) {
 //        System.out.println("updatekey: " + key + " from table: " + table);
 
-        HashMap<String,String> v = null;
+        HashMap<String,String> v = new HashMap<String, String>();
         try {
             if (values != null) {
                 String value = "";
