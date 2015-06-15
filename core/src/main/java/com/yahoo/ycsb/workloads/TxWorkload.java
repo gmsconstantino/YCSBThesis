@@ -231,11 +231,14 @@ public class TxWorkload extends CoreWorkload {
 
         for(int j = 0; j < numberOfReads; j++) {
             k = txReadNextKeynum();
-            while(keysRead.contains(k) && keysWrite.contains(k)) k = txReadNextKeynum();
+            while(keysRead.contains(k) && keysWrite.contains(k)) k = txReadNextKeynum(); // Dist. Uniforme para obter a chave
             keysRead.add(k);
         }
 
         if(txnonblindwrite > 0) {
+            /*
+             * A fazer RMW de chaves Uniformes
+             */
             int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
             @SuppressWarnings("unchecked")
             Vector<Integer>keysReadClone = (Vector<Integer>) keysRead.clone();
