@@ -237,13 +237,16 @@ public class TxWorkload extends CoreWorkload {
 
         if(txnonblindwrite > 0) {
             /*
-             * A fazer RMW de chaves Uniformes
+             * A fazer RMW de chaves zipfian
              */
             int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
-            @SuppressWarnings("unchecked")
-            Vector<Integer>keysReadClone = (Vector<Integer>) keysRead.clone();
-            for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++)
-                keysWrite.add(keysReadClone.remove(rand.nextInt(keysReadClone.size())));
+            for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++) {
+                keysRead.remove(rand.nextInt(keysRead.size()));
+                k = txNextKeynum();
+                while(keysWrite.contains(k)) k = txNextKeynum();
+                keysWrite.add(k);
+                keysRead.add(k);
+            }
         }
 		
 		Set<String> fields = new HashSet<String>(1);
