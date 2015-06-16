@@ -115,15 +115,15 @@ public class TxWorkload extends CoreWorkload {
             //plus the number of predicted keys as the total keyspace. then, if the generator picks a key that hasn't been inserted yet, will
             //just ignore it and pick another key. this way, the size of the keyspace doesn't change from the perspective of the scrambled zipfian generator
 
-            int opcount=Integer.parseInt(p.getProperty(Client.OPERATION_COUNT_PROPERTY));
-            int expectednewkeys=(int)(((double)opcount)*insertproportion*2.0); //2 is fudge factor
-
-            keychooser=new ScrambledZipfianGenerator(recordcount+expectednewkeys);
-        }
+//            int opcount=Integer.parseInt(p.getProperty(Client.OPERATION_COUNT_PROPERTY));
+//            int expectednewkeys=(int)(((double)opcount)*insertproportion*2.0); //2 is fudge factor
+//
+//            keychooser=new ScrambledZipfianGenerator(recordcount+expectednewkeys);
+//        }
 //		else if (requestdistrib.compareTo("zipfian")==0)
 //		{
-//			keychooser=new ZipfianGenerator(recordcount);
-//		}
+			keychooser=new ZipfianGenerator(100);
+		}
 		else if (requestdistrib.compareTo("latest")==0)
 		{
 			keychooser=new SkewedLatestGenerator(transactioninsertkeysequence);
@@ -162,7 +162,7 @@ public class TxWorkload extends CoreWorkload {
     }
 
     int txReadNextKeynum() {
-        int keynum = 0;
+        int keynum = keyReadChooser.nextInt();
         return keynum;
     }
     
