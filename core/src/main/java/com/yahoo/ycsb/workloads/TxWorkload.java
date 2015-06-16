@@ -167,7 +167,7 @@ public class TxWorkload extends CoreWorkload {
     }
 
     int txReadNextKeynum() {
-        int keynum = keyReadChooser.nextInt();
+        int keynum = 0;
         return keynum;
     }
     
