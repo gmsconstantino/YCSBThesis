@@ -21,6 +21,7 @@ workloadL = [
     "txworkloadf",
     "txworkloadg",
     "txworkloadh",
+    "txworkloadr",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
