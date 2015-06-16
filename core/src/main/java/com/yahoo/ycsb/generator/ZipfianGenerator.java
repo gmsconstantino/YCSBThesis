@@ -314,8 +314,8 @@ public class ZipfianGenerator extends IntegerGenerator
 	public static void main(String[] args)
 	{
         int keynum;
-        ZipfianGenerator zg = new ZipfianGenerator(1000);
-        int[] count = new int[1001];
+        ZipfianGenerator zg = new ZipfianGenerator(100);
+        int[] count = new int[1000001];
         for (int i = 0; i < 1000000; i++) {
 
             keynum=zg.nextInt();
@@ -323,7 +323,39 @@ public class ZipfianGenerator extends IntegerGenerator
             count[keynum]++;
 //            System.out.println(zg.nextInt());
         }
+
+        count = Arrays.copyOfRange(count, 0, 1001);
         System.out.println(Arrays.toString(count));
+
+        float[] perc = new float[1001];
+        for (int i = 0; i < 1000; i++){
+            perc[i] = ((float) count[i])/1000000;
+        }
+        System.out.println(Arrays.toString(perc));
+
+        float[] percAgg = new float[1001];
+        percAgg[0] = perc[0];
+        for (int i = 1; i < 1000; i++){
+            percAgg[i] = percAgg[i-1] + perc[i];
+        }
+        System.out.println(Arrays.toString(percAgg));
+
+        int index25 = 0;
+        int index50 = 0;
+        for (int i = 0; i < 1000; i++) {
+            if (percAgg[i] >= 0.25 && index25 == 0) {
+                index25 = 1;
+                System.out.println("25% - index: " + i + " value:" + percAgg[i]);
+            }
+            if (percAgg[i] >= 0.5 && index50 == 0) {
+                index50 = 1;
+                System.out.println("50% - index: " + i + " value:" + percAgg[i]);
+            }
+            if (percAgg[i] >= 0.75){
+                System.out.println("75% - index: " + i + " value:" + percAgg[i]);
+                break;
+            }
+        }
     }
 
 	/**

@@ -7,13 +7,8 @@ package com.yahoo.ycsb.workloads;
 
 import java.util.*;
 
-import com.yahoo.ycsb.TxDB;
+import com.yahoo.ycsb.*;
 
-import com.yahoo.ycsb.ByteIterator;
-import com.yahoo.ycsb.Client;
-import com.yahoo.ycsb.DB;
-import com.yahoo.ycsb.RandomByteIterator;
-import com.yahoo.ycsb.WorkloadException;
 import com.yahoo.ycsb.generator.CounterGenerator;
 import com.yahoo.ycsb.generator.ExponentialGenerator;
 import com.yahoo.ycsb.generator.HotspotIntegerGenerator;
@@ -222,8 +217,10 @@ public class TxWorkload extends CoreWorkload {
 		Vector<Integer> keysWrite = new Vector<Integer>();
 		int k;
 
+        int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
+
         int i = 0;
-        for(; i< numberOfWrites; i++) {
+        for(; i< (numberOfWrites-numberOfNonBlind); i++) {
             k = txNextKeynum();
             while(keysWrite.contains(k)) k = txNextKeynum();
             keysWrite.add(k);
@@ -239,7 +236,8 @@ public class TxWorkload extends CoreWorkload {
             /*
              * A fazer RMW de chaves zipfian
              */
-            int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
+//            int numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
+
             for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++) {
                 keysRead.remove(rand.nextInt(keysRead.size()));
                 k = txNextKeynum();
@@ -277,63 +275,27 @@ public class TxWorkload extends CoreWorkload {
 		return true;
 	}
 
-    public static void main(String[] args) {
-        ZipfianGenerator keychooser = new ZipfianGenerator(10000);
-        int txSize = 5;
-        double txread = 0.8;
-        double txnonblindwrite = 0.5;
+    public static void main(String[] args) throws UnknownDBException, DBException, WorkloadException {
 
-        int numberOfReads = (int) Math.round(txSize * txread);
-        int numberOfWrites = txSize - numberOfReads;
-        int numberOfNonBlind = 0;
-        Vector<Integer> keysRead = new Vector<Integer>();
-        Vector<Integer> keysWrite = new Vector<Integer>();
-        int k;
+        Properties p = new Properties();
+        p.put("recordcount","1000");
+        p.put("operationcount","1000");
+        p.put("txminsize","5");
+        p.put("txmaxsize","10");
+        p.put("txread", "0.8");
+        p.put("txnonblindwrite", "0.5");
+        p.put("fieldsize", "100");
+        p.put("requestdistribution", "zipfian");
 
-        Random rand = new Random();
+        Measurements.setProperties(p);
+        DB db = DBFactory.newDB("com.yahoo.ycsb.db.DatabaseClient", p);
 
-        System.out.println("Start");
+        db.init();
 
-        int[] count = new int[10001];
-        for (int j = 0; j < 1000000; j++) {
-            keysRead.clear();
-            keysWrite.clear();
+        TxWorkload w = new TxWorkload();
+        w.init(p);
+        w.doTransaction(db, null);
 
-            for(int i = 0; i < numberOfReads; i++) {
-                k = keychooser.nextInt();
-                while(keysRead.contains(k)) k = keychooser.nextInt();
-                keysRead.add(k);
-            }
-            int i = 0;
-            if(txnonblindwrite > 0) {
-                numberOfNonBlind = (int) Math.round(numberOfWrites * txnonblindwrite);
-                @SuppressWarnings("unchecked")
-                Vector<Integer>keysReadClone = (Vector<Integer>) keysRead.clone();
-                for(; i < numberOfNonBlind && keysRead.size() > 0 && i < numberOfWrites; i++)
-                    keysWrite.add(keysReadClone.remove(rand.nextInt(keysReadClone.size())));
-            }
-            for(; i< numberOfWrites; i++) {
-                k = keychooser.nextInt();
-                while(keysWrite.contains(k) && keysRead.contains(k)) k = keychooser.nextInt();
-                keysWrite.add(k);
-            }
-
-//        System.out.println("read: "+keysRead);
-//        System.out.println("write:"+keysWrite);
-
-//            for (Integer r : keysRead){
-//                count[r]++;
-//            }
-            for (Integer w : keysWrite){
-                count[w]++;
-            }
-
-            if (j%10==0)
-                System.out.print(".");
-
-        }
-        System.out.println();
-        System.out.println(Arrays.toString(count));
 
     }
 }
