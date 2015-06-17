@@ -119,10 +119,10 @@ public class TxWorkload extends CoreWorkload {
 //            int expectednewkeys=(int)(((double)opcount)*insertproportion*2.0); //2 is fudge factor
 //
 //            keychooser=new ScrambledZipfianGenerator(recordcount+expectednewkeys);
-//        }
-//		else if (requestdistrib.compareTo("zipfian")==0)
-//		{
-			keychooser=new ZipfianGenerator(100);
+        }
+		else if (requestdistrib.compareTo("zipfian")==0)
+		{
+			keychooser=new ZipfianGenerator(recordcount);
 		}
 		else if (requestdistrib.compareTo("latest")==0)
 		{
