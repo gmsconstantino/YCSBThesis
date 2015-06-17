@@ -31,7 +31,7 @@ txminsize=50
 txmaxsize=100
 
 txread=0.8
-txnonblindwrite=0.5
+txnoblind=0.5
 #percentagem de escritas e o que falta retirando as duas percentagens de cima
 
 fieldsize=100
