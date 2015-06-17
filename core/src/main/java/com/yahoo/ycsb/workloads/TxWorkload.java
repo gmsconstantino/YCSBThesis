@@ -283,7 +283,7 @@ public class TxWorkload extends CoreWorkload {
         p.put("txminsize","5");
         p.put("txmaxsize","10");
         p.put("txread", "0.8");
-        p.put("txnonblindwrite", "0.5");
+        p.put("txnoblind", "0.0");
         p.put("fieldsize", "100");
         p.put("requestdistribution", "zipfian");
 
