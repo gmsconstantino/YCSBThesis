@@ -13,15 +13,16 @@ distribution = "zipfian"
 # distribution = "uniform"
 
 workloadL = [
-	"txworkloada",
-	"txworkloadb",
-	"txworkloadc",
-    "txworkloadd",
-    "txworkloade",
-    "txworkloadf",
-    "txworkloadg",
-    "txworkloadh",
-    "txworkloadr",
+	# "txworkloada",
+	# "txworkloadb",
+	# "txworkloadc",
+    # "txworkloadd",
+    # "txworkloade",
+    # "txworkloadf",
+    # "txworkloadg",
+    # "txworkloadh",
+    # "txworkloadr",
+    "txworkloadZ",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
@@ -36,11 +37,11 @@ typeTr = [
 	#"OCCMV",
 	"SI",
 	"NMSI",
-    "NMSI+TO"
+    # "NMSI+TO"
 ]
 
 # Space of key
-recordcount = [1000,1000000]
+recordcount = [1000]#,1000000]
 
 # Number of operaction
 operationcount = [10000000]
