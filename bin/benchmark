@@ -13,16 +13,16 @@ distribution = "zipfian"
 # distribution = "uniform"
 
 workloadL = [
-	# "txworkloada",
-	# "txworkloadb",
-	# "txworkloadc",
-    # "txworkloadd",
-    # "txworkloade",
-    # "txworkloadf",
-    # "txworkloadg",
-    # "txworkloadh",
-    # "txworkloadr",
-    "txworkloadZ",
+	"txworkloada",
+	"txworkloadb",
+	"txworkloadc",
+    "txworkloadd",
+    "txworkloade",
+    "txworkloadf",
+    "txworkloadg",
+    "txworkloadh",
+    "txworkloadr",
+    # "txworkloadZ",
 	# "workloadd",
 	# "workloade",
 	# "workloadf"
