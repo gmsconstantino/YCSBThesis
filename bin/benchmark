@@ -41,7 +41,7 @@ typeTr = [
 ]
 
 # Space of key
-recordcount = [1000]#,1000000]
+recordcount = [1000,1000000]
 
 # Number of operaction
 operationcount = [10000000]
