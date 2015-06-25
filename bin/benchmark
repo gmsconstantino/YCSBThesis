@@ -20,8 +20,8 @@ workloadL = [
     "txworkloade",
     "txworkloadf",
     "txworkloadg",
-    "txworkloadh",
-    "txworkloadr",
+    # "txworkloadh",
+    # "txworkloadr",
     # "txworkloadZ",
 	# "workloadd",
 	# "workloade",
@@ -37,7 +37,7 @@ typeTr = [
 	#"OCCMV",
 	"SI",
 	"NMSI",
-    # "NMSI+TO"
+    "NMSI+TO"
 ]
 
 # Space of key
