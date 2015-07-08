@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -150,7 +151,7 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
             double txThroughput = 1000.0 * (Double.parseDouble(data.get("n_tx"))) / (Double.parseDouble(data.get("runtime")));
             data.put("tx_throughput", txThroughput + "");
         }
-
+        DecimalFormat d = new DecimalFormat("#.##");
         String values = "";
         String v = null;
         int t = keys.length-1;
@@ -158,7 +159,7 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
             if(key.equals("abortRate")){
                 double commits = Double.parseDouble(data.get("Return=0"));
                 double aborts = Double.parseDouble(data.get("Return=-1"));
-                v = "" + Math.round((aborts / (double) (commits + aborts)) * 100);
+                v = "" + d.format((aborts / (double) (commits + aborts)) * 100);
             } else
                 v = data.get(key);
             v = (v==null)?" ":v;
