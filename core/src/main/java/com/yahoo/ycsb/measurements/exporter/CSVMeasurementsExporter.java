@@ -31,7 +31,7 @@ import java.util.Properties;
 public class CSVMeasurementsExporter implements MeasurementsExporter
 {
     String keys[] = {"workloads", "recordcount", "operationcount", "threads", "distribution",
-            "transactiontype", "run", "runtime", "tx_throughput","n_tx","avg_tx","min_tx","max_tx","Return=0",
+            "transactiontype", "run", "runtime", "tx_throughput","n_tx","avg_tx","avg_tx_abort","min_tx","max_tx","Return=0",
             "Return=-1","Return=-2","Return=-3","abortRate",
             "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads",
             "max_reads", "n_updates", "avg_updates", "min_updates", "max_updates",
@@ -128,6 +128,18 @@ public class CSVMeasurementsExporter implements MeasurementsExporter
                 data.put("min_tx", d+"");
             } else if (measurement.equals("MaxLatency(us)")){
                 data.put("max_tx", d+"");
+            } else if (measurement.startsWith("Return=")){
+                data.put(measurement, d+"");
+            }
+        } else if (metric.equals("Tx_abort")){
+            if (measurement.equals("Operations")){
+                data.put("n_tx_abort", d+"");
+            } else if (measurement.equals("AverageLatency(us)")){
+                data.put("avg_tx_abort", d+"");
+            } else if (measurement.equals("MinLatency(us)")){
+                data.put("min_tx_abort", d+"");
+            } else if (measurement.equals("MaxLatency(us)")){
+                data.put("max_tx_abort", d+"");
             } else if (measurement.startsWith("Return=")){
                 data.put(measurement, d+"");
             }

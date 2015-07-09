@@ -270,7 +270,9 @@ public class TxWorkload extends CoreWorkload {
 			Measurements.getMeasurements().measure("Tx", (int)((en-st)/1000));		
 			Measurements.getMeasurements().reportReturnCode("Tx", 0);
 		} else {
-			Measurements.getMeasurements().reportReturnCode("Tx", -1);
+            long en = System.nanoTime();
+            Measurements.getMeasurements().measure("Tx_abort", (int)((en-st)/1000));
+            Measurements.getMeasurements().reportReturnCode("Tx", -1);
 		}
 		return true;
 	}
