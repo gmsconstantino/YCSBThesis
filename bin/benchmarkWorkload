@@ -9,9 +9,9 @@ def usage():
     print "Usage: %s pathToResults workload recordcount" % sys.argv[0]
     sys.exit(1)
 
-distribution = "zipfian"
+# distribution = "zipfian"
 # distribution = "scrambledzipfian"
-# distribution = "uniform"
+distribution = "uniform"
 
 typeTr = [
 	#"TWOPL",
@@ -22,11 +22,11 @@ typeTr = [
 	#"OCCMV",
 	"SI",
 	"NMSI",
-    "NMSI+TO"
+    # "NMSI+TO"
 ]
 
 # Number of operaction
-operationcount = [10000000]
+operationcount = [100000000]
 
 threads = [1,2,4,8,16,24,32,48,64]
 
