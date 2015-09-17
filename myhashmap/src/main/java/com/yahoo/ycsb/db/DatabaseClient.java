@@ -1,14 +1,13 @@
 package com.yahoo.ycsb.db;
 
-import java.util.*;
-
 import com.yahoo.ycsb.*;
-
-import com.yahoo.ycsb.measurements.Measurements;
 import fct.thesis.database.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import thrift.DatabaseSingleton;
+
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
+import java.util.Vector;
 
 /**
  * Created by gomes on 17/03/15.
@@ -17,7 +16,7 @@ public class DatabaseClient extends DB implements TxDB {
 
     Database<Integer, HashMap<String, String>> db;
     final TransactionFactory.type TYPE = DatabaseSingleton.getInstance().getType();
-    Transaction<Integer, HashMap<String, String>> t;
+    TransactionAbst<Integer, HashMap<String, String>> t;
 
     public DatabaseClient() {}
 

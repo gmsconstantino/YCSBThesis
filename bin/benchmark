@@ -39,7 +39,7 @@ typeTr = [
 	#"OCCMV",
 	"SI",
 	"NMSI",
-    "NMSI+TO"
+    # "NMSI+TO"
 ]
 
 # Space of key

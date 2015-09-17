@@ -73,7 +73,7 @@ for i in range(1,4):
                 # print ycsb_command
                 subprocess.call(ycsb_command)
 
-subprocess.Popen('cat ~/mail.txt | /local/cj.gomes/mail/msmtp/bin/msmtp -t cj.gomes@campus.fct.unl.pt', shell=True)
+subprocess.Popen('cat /home/a41903/mail.txt | /local/cj.gomes/mail/msmtp/bin/msmtp -t cj.gomes@campus.fct.unl.pt', shell=True)
 subprocess.Popen('cp /local/cj.gomes/result/* ~/raw', shell=True)
 # keys = ["workload", "recordcount", "operationcount", "threads", "run", "distribution", \
                         # "n_inserts", "avg_inserts", "min_inserts", "max_inserts", "n_reads", "avg_reads", "min_reads", \
