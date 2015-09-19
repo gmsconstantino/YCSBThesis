@@ -12,13 +12,13 @@ import java.util.Vector;
 /**
  * Created by gomes on 17/03/15.
  */
-public class DatabaseClient extends DB implements TxDB {
+public class DatabaseConnector extends DB implements TxDB {
 
     Database<Integer, HashMap<String, String>> db;
     final TransactionFactory.type TYPE = DatabaseSingleton.getInstance().getType();
     TransactionAbst<Integer, HashMap<String, String>> t;
 
-    public DatabaseClient() {}
+    public DatabaseConnector() {}
 
     private static final int OK = 0;
     private static final int ERROR = -1;
