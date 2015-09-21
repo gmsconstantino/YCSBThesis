@@ -68,8 +68,8 @@ for no in operationcount:
                         "-p", "threadcount="+str(thread), \
                         "-p", "maxexecutiontime=30", \
                         "-p", "requestdistribution="+distribution, \
-                        "-p", "fieldsize=4", "-s"]
-                        # "-s"]
+                        # "-p", "fieldsize=4",\
+                        "-s"]
             # print ycsb_command
             subprocess.call(ycsb_command)
 
