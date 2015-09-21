@@ -34,7 +34,7 @@ txread=.5
 txnoblind=1
 #percentagem de escritas e o que falta retirando as duas percentagens de cima
 
-fieldsize=100
+fieldsize=4
 
 requestdistribution=uniform
 
