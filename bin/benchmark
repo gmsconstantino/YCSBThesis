@@ -43,7 +43,8 @@ typeTr = [
 ]
 
 # Space of key
-recordcount = [1000,1000000]
+# recordcount = [1000,1000000]
+recordcount = [1000000]
 
 # Number of operaction
 operationcount = [10000000]
@@ -79,7 +80,7 @@ for i in range(1,3+1):
 									#"-p", "fieldsize=10", "-s"]
 									"-s"]
 						# print ycsb_command
-					    subprocess.call(ycsb_command)
+                        subprocess.call(ycsb_command)
 
 
 # keys = ["workload", "recordcount", "operationcount", "threads", "run", "distribution", \
