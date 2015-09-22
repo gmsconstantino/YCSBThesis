@@ -1,17 +1,42 @@
 #!/usr/bin/env python
 
 import os
+import subprocess
 
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 uniform")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 uniform")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 uniform")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 uniform")
+threads = [1,2,4,8,16,32,64]
 
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloada 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloada 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 zipfian")
-os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 zipfian")
+fieldsizes = [
+    "100",
+    "1000",
+]
+
+keys = [
+    "1000",
+    "100000",
+]
+
+typeTr = [
+    "SI",
+    "NMSI",
+]
+
+distributions = [
+    "uniform",
+    "zipfian"
+]
+
+for i in range(1,4):
+    for fieldsize in fieldsizes:
+        for key in keys:
+            for distribution in distributions:
+                for thread in threads:
+                    for typeT in typeTr:
+                        workload = "k{}_f{}_{}".format(key,fieldsize,distribution)
+                        # Usage: ./bin/benchmarkconsole pathToResults distribuiton workload algorithm recordcount threads fieldsize
+                        call = "./bin/benchmarkconsole /local/cj.gomes/result/ {} {} {} {} {} {}".format(distribution,workload,typeT, key, thread, fieldsize)
+                        # print workload
+                        # print call
+                        os.system(call)
+
+subprocess.Popen('cat /home/a41903/mail.txt | /local/cj.gomes/mail/msmtp/bin/msmtp -t cj.gomes@campus.fct.unl.pt', shell=True)
+subprocess.Popen('cp /local/cj.gomes/result/* ~/raw', shell=True)

@@ -1,0 +1,9 @@
+nameworkload=default
+workload=com.yahoo.ycsb.workloads.TxWorkload
+
+txminsize=5
+txmaxsize=10
+
+txread=0.8
+txnoblind=0.5
+#percentagem de escritas e o que falta retirando as duas percentagens de cima
