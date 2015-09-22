@@ -6,12 +6,12 @@ import subprocess
 import re
 
 def usage():
-    print "Usage: %s pathToResults workload recordcount" % sys.argv[0]
+    print "Usage: %s pathToResults workload recordcount distribution" % sys.argv[0]
     sys.exit(1)
 
 # distribution = "zipfian"
 # distribution = "scrambledzipfian"
-distribution = "uniform"
+# distribution = "uniform"
 
 typeTr = [
 	#"TWOPL",
@@ -30,12 +30,13 @@ operationcount = [100000000]
 
 threads = [1,2,4,8,16,24,32,48,64]
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 5:
     usage()
 
 pathresult = sys.argv[1]
 workload = sys.argv[2]
 recordcount = sys.argv[3]
+distribution = sys.argv[4]
 
 if os.path.exists("/local/cj.gomes/TransactionalHashMapJava"):
     p = re.compile('\* \\w*')
