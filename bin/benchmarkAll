@@ -31,9 +31,9 @@ for i in range(1,4):
             for distribution in distributions:
                 for thread in threads:
                     for typeT in typeTr:
-                        workload = "k{}_f{}_{}".format(key,fieldsize,distribution)
+                        workload = "k{0}_f{1}_{2}".format(key,fieldsize,distribution)
                         # Usage: ./bin/benchmarkconsole pathToResults distribuiton workload algorithm recordcount threads fieldsize
-                        call = "./bin/benchmarkconsole /local/cj.gomes/result/ {} {} {} {} {} {}".format(distribution,workload,typeT, key, thread, fieldsize)
+                        call = "./bin/benchmarkconsole /local/cj.gomes/result/ {0} {1} {2} {3} {4} {5}".format(distribution,workload,typeT, key, thread, fieldsize)
                         # print workload
                         # print call
                         os.system(call)
