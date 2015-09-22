@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import os
+
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 uniform")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 uniform")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 uniform")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 uniform")
+
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloada 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloada 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadb 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 zipfian")
+os.system("./bin/benchmarkWorkload /local/cj.gomes/result/ txworkloadc 1000000 zipfian")
